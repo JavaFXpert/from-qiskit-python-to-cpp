@@ -31,7 +31,7 @@ message(STATUS "Qiskit C API library: ${QISKIT_LIB}")
 # qiskit-cpp header-only SDK
 # ---------------------------------------------------------------------------
 if(NOT QISKIT_CPP_SRC)
-  set(QISKIT_CPP_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../qiskit-cpp/src"
+  set(QISKIT_CPP_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../qiskit-cpp/src"
       CACHE PATH "Path to qiskit-cpp src/ directory")
 endif()
 # Convert to absolute path so the compiler can find headers from any build dir

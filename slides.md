@@ -550,24 +550,19 @@ qc.rx(a, 1)
 
 ---
 
-## Binding Parameters
+## Parameter Comparison
 
-### Python
-
-```python
-bound = qc.assign_parameters({theta: math.pi/4, phi: math.pi/3})
-```
-
-### C++
+Numeric parameters support equality testing:
 
 ```cpp
-circ.assign_parameters(
-    {"theta", "phi"},
-    {M_PI / 4, M_PI / 3}
-);
+Parameter p1(M_PI / 2.0);
+Parameter p2(M_PI / 2.0);
+std::cout << (p1 == p2) << std::endl;  // 1 (true)
 ```
 
-**Key difference:** Python uses a dict mapping Parameter objects to values. C++ uses two parallel vectors — names and values.
+The full `Parameter` class supports: `+`, `-`, `*`, `/`, `pow()`, `sin()`, `cos()`, `exp()`, `log()`, and more.
+
+> **Note:** `assign_parameters()` (binding symbolic values to numbers) is not yet implemented in qiskit-cpp. Use numeric values directly when concrete angles are needed.
 
 ### Checkpoint
 
@@ -575,7 +570,7 @@ circ.assign_parameters(
 ./parameterized
 ```
 
-<!-- NOTES: Point out that C++ modifies the circuit in place, while Python returns a new circuit by default. -->
+<!-- NOTES: Parameter binding is a TODO in the C++ SDK. For now, use Parameters for symbolic circuit construction and pass numeric doubles when you need concrete values. -->
 
 ---
 
@@ -919,7 +914,7 @@ auto meas_data = pub_result.data("meas");
 | **Gates** | `qc.h(0)` | `circ.h(0);` |
 | **Measure** | `qc.measure([0,1], [0,1])` | `circ.measure(qr, cr);` |
 | **Parameter** | `Parameter('t')` | `Parameter t("t");` |
-| **Bind** | `qc.assign_parameters({t: 1.57})` | `circ.assign_parameters({"t"}, {1.57});` |
+| **Param expr** | `theta + 0.5` | `theta + 0.5` (operator overloading) |
 | **Transpile** | `generate_preset_pass_manager(backend=backend)` | `generate_preset_pass_manager(2, backend)` |
 | **Sampler** | `SamplerV2(backend)` | `BackendSamplerV2(backend, shots)` |
 | **Run** | `sampler.run([qc]).result()` | `sampler.run({SamplerPub(circ)})->result()` |

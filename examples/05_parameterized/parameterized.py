@@ -1,14 +1,15 @@
-"""Example 05: Parameterized Circuit — Parameters and binding."""
+"""Example 05: Parameterized Circuit — Parameters and expressions."""
 
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
-import math
 
 qc = QuantumCircuit(2, 2)
 
+# Create symbolic parameters
 theta = Parameter('theta')
 phi = Parameter('phi')
 
+# Use parameters directly in gates
 qc.h(0)
 qc.rx(theta, 0)
 qc.ry(phi, 1)
@@ -19,7 +20,8 @@ print("Parameterized circuit:")
 print(qc)
 print(f"\nParameters: {qc.parameters}")
 
-# Bind parameters
-bound = qc.assign_parameters({theta: math.pi / 4, phi: math.pi / 3})
-print("\nBound circuit:")
-print(bound)
+# Parameter expressions support arithmetic
+a = theta + 0.5
+b = phi * 2.0
+print(f"\ntheta + 0.5 = {a}")
+print(f"phi * 2.0   = {b}")

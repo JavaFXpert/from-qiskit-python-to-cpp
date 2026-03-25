@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Slides</title>
+
+  <!-- IBM Plex fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" />
+
+  <style>
+    :root {
+      --cds-background:           #ffffff;
+      --cds-layer-01:             #f4f4f4;
+      --cds-layer-02:             #e0e0e0;
+      --cds-border-subtle:        #e0e0e0;
+      --cds-border-strong:        #8d8d8d;
+      --cds-text-primary:         #161616;
+      --cds-text-secondary:       #525252;
+      --cds-text-inverse:         #ffffff;
+      --cds-link-primary:         #0f62fe;
+      --cds-link-visited:         #8a3ffc;
+      --cds-focus:                #0f62fe;
+      --cds-interactive:          #0f62fe;
+      --cds-support-error:        #da1e28;
+      --cds-spacing-02: 0.25rem;
+      --cds-spacing-03: 0.5rem;
+      --cds-spacing-04: 0.75rem;
+      --cds-spacing-05: 1rem;
+      --cds-spacing-06: 1.5rem;
+      --cds-spacing-07: 2rem;
+      --cds-spacing-08: 2.5rem;
+      --cds-spacing-09: 3rem;
+      --cds-body-01-size:         0.875rem;
+      --cds-body-02-size:         1rem;
+      --cds-heading-03-size:      1.25rem;
+      --cds-heading-04-size:      1.75rem;
+      --cds-heading-05-size:      2rem;
+      --cds-heading-07-size:      3.375rem;
+    }
+
+    html.dark-theme {
+      --cds-background:           #161616;
+      --cds-layer-01:             #262626;
+      --cds-layer-02:             #393939;
+      --cds-border-subtle:        #393939;
+      --cds-border-strong:        #6f6f6f;
+      --cds-text-primary:         #f4f4f4;
+      --cds-text-secondary:       #c6c6c6;
+      --cds-text-inverse:         #ffffff;
+      --cds-link-primary:         #78a9ff;
+      --cds-link-visited:         #be95ff;
+      --cds-interactive:          #4589ff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 100%; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+      font-size: var(--cds-body-02-size); line-height: 1.5;
+      color: var(--cds-text-primary); background-color: var(--cds-background);
+    }
+
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 3rem; padding: 0 var(--cds-spacing-05);
+      background-color: var(--cds-text-primary); color: var(--cds-text-inverse);
+      font-size: 0.875rem;
+    }
+    .nav-bar-title { font-weight: 600; }
+    .nav-bar-controls { display: flex; align-items: center; gap: var(--cds-spacing-04); }
+    .nav-bar button {
+      background: none; border: 1px solid transparent;
+      color: var(--cds-text-inverse); font-family: inherit;
+      font-size: 0.875rem; cursor: pointer;
+      padding: var(--cds-spacing-02) var(--cds-spacing-03);
+    }
+    .nav-bar button:hover { background-color: rgba(255,255,255,0.1); }
+    .slide-counter { font-variant-numeric: tabular-nums; opacity: 0.7; }
+
+    .slides-container {
+      max-width: 52rem; margin: 0 auto;
+      padding: var(--cds-spacing-07) var(--cds-spacing-05);
+    }
+
+    .slide.title-slide { padding: var(--cds-spacing-09) 0; border-bottom: 1px solid var(--cds-border-subtle); }
+    .slide.title-slide h1 {
+      font-size: var(--cds-heading-07-size); font-weight: 300;
+      line-height: 1.15; margin-bottom: var(--cds-spacing-05);
+    }
+    .slide.title-slide h3 {
+      font-size: var(--cds-heading-04-size); font-weight: 300;
+      line-height: 1.3; color: var(--cds-text-secondary);
+      margin-bottom: var(--cds-spacing-06);
+    }
+    .slide.title-slide blockquote {
+      background: none; border-left: none; padding: 0;
+      color: var(--cds-text-secondary); font-size: var(--cds-body-01-size);
+    }
+
+    /* Subtitle + logo row (auto-generated flex wrapper) */
+    .title-subtitle-row {
+      display: flex;
+      align-items: center;
+      gap: var(--cds-spacing-06);
+      margin-bottom: var(--cds-spacing-06);
+    }
+    .title-subtitle-row h3 {
+      margin-bottom: 0;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Title slide logo */
+    img.title-logo {
+      max-height: 12rem;
+      width: auto;
+      max-width: 45%;
+      margin: 0;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .slide {
+      padding: var(--cds-spacing-08) 0;
+      border-bottom: 1px solid var(--cds-border-subtle);
+    }
+    .slide:last-child { border-bottom: none; }
+
+    /* Per-slide footer (auto-generated from title slide metadata) */
+    .slide-footer {
+      margin-top: var(--cds-spacing-08);
+      padding-top: var(--cds-spacing-04);
+      font-size: 0.75rem;
+      color: var(--cds-text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .slide-footer-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .slide-footer-page {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      margin-left: var(--cds-spacing-05);
+    }
+
+    .slide h2 {
+      font-size: var(--cds-heading-05-size); font-weight: 300;
+      line-height: 1.25; margin-bottom: var(--cds-spacing-06);
+    }
+    .slide h3 {
+      font-size: var(--cds-heading-03-size); font-weight: 600;
+      line-height: 1.4; margin-top: var(--cds-spacing-07);
+      margin-bottom: var(--cds-spacing-04);
+    }
+    .slide p {
+      font-size: var(--cds-body-02-size); line-height: 1.625;
+      margin-bottom: var(--cds-spacing-05); max-width: 42rem;
+    }
+    .slide strong { font-weight: 600; }
+    .slide a { color: var(--cds-link-primary); text-decoration: none; }
+    .slide a:hover { text-decoration: underline; }
+
+    .slide ul, .slide ol {
+      margin-bottom: var(--cds-spacing-05); padding-left: var(--cds-spacing-06);
+    }
+    .slide li {
+      font-size: var(--cds-body-02-size); line-height: 1.625;
+      margin-bottom: var(--cds-spacing-03);
+    }
+
+    .slide blockquote {
+      border-left: 3px solid var(--cds-interactive);
+      background-color: var(--cds-layer-01);
+      padding: var(--cds-spacing-05); margin: var(--cds-spacing-06) 0;
+    }
+    .slide blockquote p { margin-bottom: 0; font-style: normal; }
+
+    .slide table {
+      width: 100%; border-collapse: collapse;
+      margin: var(--cds-spacing-06) 0; font-size: var(--cds-body-01-size);
+    }
+    .slide thead th {
+      text-align: left; font-weight: 600; font-size: 0.75rem;
+      letter-spacing: 0.32px; text-transform: uppercase;
+      background-color: var(--cds-layer-01);
+      padding: var(--cds-spacing-03) var(--cds-spacing-05);
+      border-bottom: 1px solid var(--cds-border-strong);
+    }
+    .slide tbody td {
+      padding: var(--cds-spacing-03) var(--cds-spacing-05);
+      border-bottom: 1px solid var(--cds-border-subtle); vertical-align: top;
+    }
+    .slide tbody tr:hover { background-color: var(--cds-layer-01); }
+
+    .slide code {
+      font-family: 'IBM Plex Mono', 'Menlo', monospace; font-size: 0.8125rem;
+    }
+    .slide p code, .slide li code, .slide td code {
+      background-color: var(--cds-layer-01); padding: 0.125em 0.375em;
+    }
+    .slide pre {
+      background-color: var(--cds-layer-01); padding: var(--cds-spacing-05);
+      margin: var(--cds-spacing-06) 0; overflow-x: auto;
+    }
+    .slide pre code { background: none; padding: 0; line-height: 1.6; }
+
+    /* =========================================================
+       SYNTAX HIGHLIGHTING (Carbon-aligned Prism theme)
+       ========================================================= */
+    .slide pre code .token.comment,
+    .slide pre code .token.prolog,
+    .slide pre code .token.doctype,
+    .slide pre code .token.cdata {
+      color: #8d8d8d;          /* cds-border-strong: muted for comments */
+      font-style: italic;
+    }
+    .slide pre code .token.punctuation {
+      color: #525252;          /* cds-text-secondary */
+    }
+    .slide pre code .token.property,
+    .slide pre code .token.tag,
+    .slide pre code .token.boolean,
+    .slide pre code .token.number,
+    .slide pre code .token.constant,
+    .slide pre code .token.symbol {
+      color: #0f62fe;          /* cds-interactive: core blue */
+    }
+    .slide pre code .token.selector,
+    .slide pre code .token.attr-name,
+    .slide pre code .token.string,
+    .slide pre code .token.char,
+    .slide pre code .token.builtin {
+      color: #198038;          /* cds-support-success: green for strings */
+    }
+    .slide pre code .token.operator,
+    .slide pre code .token.entity,
+    .slide pre code .token.url,
+    .slide pre code .token.variable {
+      color: #6929c4;          /* Purple 70: distinct from blue/green */
+    }
+    .slide pre code .token.atrule,
+    .slide pre code .token.attr-value,
+    .slide pre code .token.keyword {
+      color: #a2191f;          /* Red 70: keywords stand out */
+    }
+    .slide pre code .token.function,
+    .slide pre code .token.class-name {
+      color: #0043ce;          /* Blue 70: functions/classes */
+    }
+    .slide pre code .token.regex,
+    .slide pre code .token.important {
+      color: #b28600;          /* Yellow 50 darkened: regex/important */
+    }
+    .slide pre code .token.important,
+    .slide pre code .token.bold { font-weight: 600; }
+    .slide pre code .token.italic { font-style: italic; }
+
+    /* Dark theme syntax overrides */
+    html.dark-theme .slide pre code .token.comment,
+    html.dark-theme .slide pre code .token.prolog,
+    html.dark-theme .slide pre code .token.doctype,
+    html.dark-theme .slide pre code .token.cdata {
+      color: #6f6f6f;
+    }
+    html.dark-theme .slide pre code .token.punctuation {
+      color: #c6c6c6;
+    }
+    html.dark-theme .slide pre code .token.property,
+    html.dark-theme .slide pre code .token.tag,
+    html.dark-theme .slide pre code .token.boolean,
+    html.dark-theme .slide pre code .token.number,
+    html.dark-theme .slide pre code .token.constant,
+    html.dark-theme .slide pre code .token.symbol {
+      color: #78a9ff;          /* Blue 40 */
+    }
+    html.dark-theme .slide pre code .token.selector,
+    html.dark-theme .slide pre code .token.attr-name,
+    html.dark-theme .slide pre code .token.string,
+    html.dark-theme .slide pre code .token.char,
+    html.dark-theme .slide pre code .token.builtin {
+      color: #42be65;          /* Green 40 */
+    }
+    html.dark-theme .slide pre code .token.operator,
+    html.dark-theme .slide pre code .token.entity,
+    html.dark-theme .slide pre code .token.url,
+    html.dark-theme .slide pre code .token.variable {
+      color: #be95ff;          /* Purple 40 */
+    }
+    html.dark-theme .slide pre code .token.atrule,
+    html.dark-theme .slide pre code .token.attr-value,
+    html.dark-theme .slide pre code .token.keyword {
+      color: #ff8389;          /* Red 40 */
+    }
+    html.dark-theme .slide pre code .token.function,
+    html.dark-theme .slide pre code .token.class-name {
+      color: #a6c8ff;          /* Blue 30 */
+    }
+    html.dark-theme .slide pre code .token.regex,
+    html.dark-theme .slide pre code .token.important {
+      color: #f1c21b;          /* Yellow 30 */
+    }
+
+    /* =========================================================
+       TASK LISTS (GFM checkboxes)
+       ========================================================= */
+    .slide ul.contains-task-list,
+    .slide .task-list-item {
+      list-style: none;
+    }
+    .slide ul.contains-task-list {
+      padding-left: var(--cds-spacing-05);
+    }
+    .slide .task-list-item {
+      position: relative;
+      padding-left: 0.25rem;
+    }
+    .slide .task-list-item input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--cds-border-strong);
+      background: var(--cds-background);
+      vertical-align: middle;
+      margin-right: var(--cds-spacing-03);
+      position: relative;
+      top: -1px;
+      cursor: default;
+    }
+    .slide .task-list-item input[type="checkbox"]:checked {
+      background: var(--cds-interactive);
+      border-color: var(--cds-interactive);
+    }
+    .slide .task-list-item input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 9px;
+      border: solid var(--cds-text-inverse);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .slide img {
+      max-width: 100%; height: auto; display: block;
+      margin: var(--cds-spacing-06) 0;
+    }
+
+    .mermaid-diagram {
+      margin: var(--cds-spacing-06) 0; text-align: center;
+    }
+    .mermaid-diagram svg { max-width: 100%; }
+    .mermaid-fallback {
+      text-align: left; font-size: 12px;
+      color: var(--cds-text-secondary);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .footer {
+      max-width: 52rem; margin: 0 auto;
+      padding: var(--cds-spacing-07) var(--cds-spacing-05);
+      border-top: 1px solid var(--cds-border-subtle);
+      font-size: 0.75rem; color: var(--cds-text-secondary);
+      display: flex; justify-content: space-between;
+    }
+
+    @media print {
+      /* Hide UI chrome */
+      .nav-bar, .footer { display: none !important; }
+
+      /* Reset container for print */
+      .slides-container {
+        max-width: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      /* Each slide becomes its own page */
+      .slide {
+        page-break-after: always;
+        page-break-inside: avoid;
+        border-bottom: none;
+        padding: 0.75in 0 0 0;
+        min-height: auto;
+      }
+
+      .slide:last-child {
+        page-break-after: auto;
+      }
+
+      /* Ensure images, tables, code blocks don't split across pages */
+      .slide img, .slide table, .slide pre,
+      .slide .mermaid-diagram, .slide blockquote {
+        page-break-inside: avoid;
+      }
+
+      /* Force light theme colors for print regardless of screen theme */
+      :root, html.dark-theme {
+        --cds-background:      #ffffff;
+        --cds-layer-01:        #f4f4f4;
+        --cds-layer-02:        #e0e0e0;
+        --cds-border-subtle:   #e0e0e0;
+        --cds-border-strong:   #8d8d8d;
+        --cds-text-primary:    #161616;
+        --cds-text-secondary:  #525252;
+        --cds-interactive:     #0f62fe;
+        --cds-link-primary:    #0f62fe;
+      }
+
+      /* Print-friendly link display: show URL after link text */
+      .slide a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.75rem;
+        color: #525252;
+        word-break: break-all;
+      }
+
+      /* Mermaid SVGs: ensure they print and fit */
+      .slide .mermaid-diagram svg {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+
+      /* Slide footers: keep with their slide */
+      .slide-footer {
+        page-break-inside: avoid;
+        page-break-before: avoid;
+      }
+    }
+    @media (max-width: 672px) {
+      .slide h2 { font-size: var(--cds-heading-04-size); }
+      .slide.title-slide h1 { font-size: var(--cds-heading-05-size); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-bar" role="banner">
+    <span class="nav-bar-title" id="deckTitle">Carbon Slides</span>
+    <div class="nav-bar-controls">
+      <span class="slide-counter" id="slideCounter"></span>
+      <button onclick="toggleTheme()">Theme</button>
+      <button onclick="exportPDF()" title="Export to PDF">PDF</button>
+    </div>
+  </nav>
+
+  <main class="slides-container" id="slidesContainer">
+    <p style="color: var(--cds-text-secondary);">Loading slides...</p>
+  </main>
+
+  <footer class="footer">
+    <span>Built with Carbon Design System tokens</span>
+    <span id="footerDate"></span>
+  </footer>
+
+  <!-- marked v4: stable renderer API -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+
+  <!-- Prism.js for syntax highlighting (no CSS theme -- we use our own Carbon theme above) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <script>
+    var SLIDES_FILE = 'slides.md';
+
+    // PDF export via browser print dialog
+    function exportPDF() {
+      // If in dark theme, temporarily swap to light for printing
+      var wasDark = document.documentElement.classList.contains('dark-theme');
+      if (wasDark) {
+        document.documentElement.classList.remove('dark-theme');
+      }
+      window.print();
+      if (wasDark) {
+        document.documentElement.classList.add('dark-theme');
+      }
+    }
+
+    // Carbon-to-Mermaid color mapping
+    // Mermaid's 'base' theme lets us override every color via themeVariables.
+    // We map Carbon's token values directly so diagrams match the page.
+    var MERMAID_LIGHT = {
+      theme: 'base',
+      themeVariables: {
+        // Node fills and borders (Carbon neutral gray)
+        primaryColor:       '#e0e0e0', // cds-layer-02: default node fill
+        primaryBorderColor: '#8d8d8d', // cds-border-strong: node borders
+        primaryTextColor:   '#161616', // cds-text-primary: text in nodes
+
+        // Secondary nodes (Carbon Blue family for accents)
+        secondaryColor:       '#d0e2ff', // Blue 20: secondary node fill
+        secondaryBorderColor: '#0f62fe', // Blue 60 (cds-interactive)
+        secondaryTextColor:   '#161616',
+
+        // Tertiary / subgraph backgrounds
+        tertiaryColor:       '#f4f4f4', // cds-layer-01
+        tertiaryBorderColor: '#e0e0e0', // cds-border-subtle
+        tertiaryTextColor:   '#161616',
+
+        // Connectors and labels
+        lineColor:            '#525252', // cds-text-secondary: arrows
+        textColor:            '#161616', // general labels
+        edgeLabelBackground:  '#ffffff', // cds-background
+
+        // Subgraph (cluster) styling
+        clusterBkg:    '#f4f4f4', // cds-layer-01
+        clusterBorder: '#e0e0e0', // cds-border-subtle
+
+        // Gantt chart
+        gridColor:       '#e0e0e0',
+        doneTaskBkgColor:'#a6c8ff', // Blue 30
+        doneTaskBorderColor: '#0f62fe',
+        activeTaskBkgColor:  '#d0e2ff', // Blue 20
+        activeTaskBorderColor:'#0f62fe',
+        critBkgColor:    '#fff1f1', // Red 10
+        critBorderColor: '#da1e28', // cds-support-error
+        taskTextColor:   '#161616',
+        sectionBkgColor: '#f4f4f4',
+        altSectionBkgColor: '#e0e0e0',
+        sectionBkgColor2: '#f4f4f4',
+
+        // Fonts
+        fontFamily: 'IBM Plex Sans, Helvetica Neue, Arial, sans-serif',
+        fontSize: '14px'
+      }
+    };
+
+    var MERMAID_DARK = {
+      theme: 'base',
+      themeVariables: {
+        primaryColor:       '#393939', // cds-layer-02 dark
+        primaryBorderColor: '#6f6f6f', // cds-border-strong dark
+        primaryTextColor:   '#f4f4f4', // cds-text-primary dark
+
+        secondaryColor:       '#002d9c', // Blue 80
+        secondaryBorderColor: '#4589ff', // cds-interactive dark
+        secondaryTextColor:   '#f4f4f4',
+
+        tertiaryColor:       '#262626', // cds-layer-01 dark
+        tertiaryBorderColor: '#393939',
+        tertiaryTextColor:   '#f4f4f4',
+
+        lineColor:            '#c6c6c6', // cds-text-secondary dark
+        textColor:            '#f4f4f4',
+        edgeLabelBackground:  '#161616', // cds-background dark
+
+        clusterBkg:    '#262626',
+        clusterBorder: '#393939',
+
+        gridColor:       '#393939',
+        doneTaskBkgColor:'#0043ce', // Blue 70
+        doneTaskBorderColor: '#4589ff',
+        activeTaskBkgColor:  '#002d9c',
+        activeTaskBorderColor:'#4589ff',
+        critBkgColor:    '#520408',
+        critBorderColor: '#fa4d56',
+        taskTextColor:   '#f4f4f4',
+        sectionBkgColor: '#262626',
+        altSectionBkgColor: '#393939',
+        sectionBkgColor2: '#262626',
+
+        fontFamily: 'IBM Plex Sans, Helvetica Neue, Arial, sans-serif',
+        fontSize: '14px'
+      }
+    };
+
+    function getMermaidConfig(isDark) {
+      var vars = isDark ? MERMAID_DARK : MERMAID_LIGHT;
+      return {
+        startOnLoad: false,
+        securityLevel: 'loose',
+        theme: vars.theme,
+        themeVariables: vars.themeVariables,
+        flowchart: { curve: 'monotoneX' }
+      };
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark-theme');
+      if (typeof mermaid !== 'undefined') {
+        var isDark = document.documentElement.classList.contains('dark-theme');
+        try {
+          mermaid.initialize(getMermaidConfig(isDark));
+        } catch(e) {}
+        renderMermaid();
+      }
+    }
+
+    // Pre-process: pull mermaid blocks out of the markdown BEFORE marked sees them.
+    // This avoids all renderer API compatibility issues.
+    function extractMermaidBlocks(md) {
+      var i = 0;
+      return md.replace(/```mermaid\s*\n([\s\S]*?)```/g, function(match, diagram) {
+        var id = 'mermaid-ph-' + (i++);
+        var escaped = diagram.trim()
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return '<div class="mermaid-diagram" id="' + id +
+          '" data-graph="' + encodeURIComponent(diagram.trim()) + '">' +
+          '<pre class="mermaid-fallback">' + escaped + '</pre></div>';
+      });
+    }
+
+    // Render mermaid diagrams from the placeholder divs
+    var mermaidRenderCount = 0;
+    async function renderMermaid() {
+      if (typeof mermaid === 'undefined') return;
+      var els = document.querySelectorAll('.mermaid-diagram[data-graph]');
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        var graphDef = decodeURIComponent(el.getAttribute('data-graph'));
+        try {
+          var uid = 'mmd' + Date.now() + '_' + (mermaidRenderCount++);
+          var result = await mermaid.render(uid, graphDef);
+          el.innerHTML = result.svg;
+        } catch (e) {
+          console.warn('Mermaid diagram ' + i + ' error:', e);
+        }
+      }
+    }
+
+    // Configure marked v4
+    marked.setOptions({ gfm: true, breaks: false });
+
+    // Configure Prism autoloader for language grammars
+    if (typeof Prism !== 'undefined' && Prism.plugins && Prism.plugins.autoloader) {
+      Prism.plugins.autoloader.languages_path =
+        'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+    }
+
+    function renderSlides(md) {
+      var processed = extractMermaidBlocks(md);
+      var sections = processed.split(/\n\s*---\s*\n/);
+      var container = document.getElementById('slidesContainer');
+      container.innerHTML = '';
+
+      sections.forEach(function(section, index) {
+        var trimmed = section.trim();
+        if (!trimmed) return;
+        var div = document.createElement('div');
+        div.className = 'slide' + (index === 0 ? ' title-slide' : '');
+        div.id = 'slide-' + index;
+        div.innerHTML = marked.parse(trimmed);
+        container.appendChild(div);
+      });
+
+      var count = container.querySelectorAll('.slide').length;
+      document.getElementById('slideCounter').textContent =
+        count + ' slide' + (count !== 1 ? 's' : '');
+
+      var h1 = container.querySelector('h1');
+      if (h1) {
+        document.getElementById('deckTitle').textContent = h1.textContent;
+        document.title = h1.textContent;
+      }
+      document.getElementById('footerDate').textContent =
+        new Date().toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+    }
+
+    function setupScrollTracking() {
+      var counter = document.getElementById('slideCounter');
+      var slides = document.querySelectorAll('.slide');
+      if (!slides.length) return;
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var idx = Array.from(slides).indexOf(entry.target);
+            counter.textContent = (idx + 1) + ' / ' + slides.length;
+          }
+        });
+      }, { threshold: 0.3 });
+      slides.forEach(function(s) { observer.observe(s); });
+    }
+
+    // Embedded demo (fallback when fetch fails, e.g. in preview)
+    var DEMO = '# Carbon Slides Element Showcase\n### Every supported Markdown element, rendered with Carbon design tokens\n\n![Logo](https://placehold.co/320x120/0f62fe/ffffff?text=ACME+Corp)\n\n> Jim Weaver -- March 2026\n\n<!-- NOTES: This deck demonstrates every element type the template supports. Use it as a reference when building your own presentations. -->\n\n---\n\n## Agenda\n\n1. Typography and text formatting\n2. Lists and nesting\n3. Task lists\n4. Blockquotes and callouts\n5. Tables\n6. Code blocks (with syntax highlighting)\n7. Images and captions\n8. Mermaid: flowchart\n9. Mermaid: sequence diagram\n10. Mermaid: Gantt chart\n11. Mermaid: pie chart\n12. Mermaid: entity-relationship diagram\n13. Mermaid: state diagram\n14. Mermaid: class diagram\n15. Combining elements\n16. Speaker notes and links\n\n---\n\n## Typography and Text Formatting\n\nThis slide demonstrates the text formatting options available.\n\nParagraphs are plain body text rendered at 16px in IBM Plex Sans with a line-height of 1.625. They are capped at a 42rem measure for comfortable reading. This is a second sentence in the same paragraph to show how longer text flows.\n\nUse **bold text** to emphasize key terms. Carbon renders bold as semibold (weight 600) rather than the browser default of 700, which gives it a cleaner look.\n\nUse *italic text* for secondary emphasis, attributions, or foreign phrases.\n\nUse `inline code` for technical terms, file names like `slides.md`, commands like `git push`, or variable names like `fontSize`.\n\nYou can also combine them: ***bold italic***, **`bold code`**, and *`italic code`* all work.\n\n### This is a sub-heading\n\nSub-headings within a slide use `###` and render at 20px with weight 600. Use them sparingly to divide a dense slide into two logical sections. Never go deeper than `###` in a slide deck.\n\n---\n\n## Unordered Lists\n\nSimple bullet lists for non-sequential information:\n\n- First item in the list\n- Second item with **bold emphasis** on a key phrase\n- Third item mentioning a `technical term` inline\n- Fourth item with *italic aside*\n\n### Nested unordered lists\n\n- Parent item one\n  - Child item A\n  - Child item B\n    - Grandchild item (three levels deep is the practical limit)\n  - Child item C\n- Parent item two\n  - Child item D\n\n---\n\n## Ordered Lists\n\nUse numbered lists when sequence or ranking matters:\n\n1. First, define the problem clearly\n2. Second, gather evidence and data\n3. Third, propose a solution\n4. Fourth, validate with stakeholders\n5. Fifth, implement and measure\n\n### Nested ordered lists\n\n1. Phase one: discovery\n   1. Conduct user interviews\n   2. Analyze existing data\n   3. Map current workflows\n2. Phase two: design\n   1. Create wireframes\n   2. Build prototypes\n   3. Run usability tests\n3. Phase three: delivery\n   1. Develop MVP\n   2. Beta testing\n   3. Launch\n\n---\n\n## Mixed Lists\n\nYou can nest ordered lists inside unordered lists and vice versa:\n\n- Planning considerations\n  1. Timeline constraints\n  2. Budget limits\n  3. Team capacity\n- Technical requirements\n  1. Performance benchmarks\n  2. Accessibility standards\n  3. Security compliance\n- Open questions\n  - Who owns the rollout?\n  - What does success look like?\n\n---\n\n## Task Lists\n\nTask lists use checkbox syntax to track completion. Checked items get a filled Carbon blue checkbox, unchecked items get an empty bordered box.\n\n- [x] Define project scope\n- [x] Assemble the team\n- [x] Complete discovery phase\n- [ ] Build the prototype\n- [ ] Run user testing\n- [ ] Launch to production\n\n### Sprint status with context\n\n- [x] API authentication endpoint -- merged Monday\n- [x] Database migration scripts -- passed review\n- [ ] Front-end dashboard -- in progress, 70% complete\n- [ ] Load testing -- blocked on staging environment\n- [ ] Documentation -- not started\n\n---\n\n## Blockquotes as Callouts\n\nBlockquotes are styled as Carbon callout boxes with a blue left border and gray background.\n\n> This is a single-line callout for a key takeaway or memorable quote.\n\nThey work well after presenting evidence, to summarize the point:\n\n> When used at the end of a slide, blockquotes act as a visual anchor. The audience\'s eye is drawn to the colored border and background shift, making this the thing they remember.\n\n### Blockquotes with formatting\n\n> You can use **bold**, *italic*, and `code` inside blockquotes. Everything renders correctly.\n\n> *Italic blockquotes work well for attributions or editorial asides, like this one.*\n\n---\n\n## Tables: Simple\n\nTables are styled with Carbon\'s data table treatment: uppercase headers, hover rows, and consistent spacing.\n\n| Name       | Role             | Location      |\n|------------|------------------|---------------|\n| Alice Chen | Engineering Lead | San Francisco |\n| Bob Patel  | Product Manager  | New York      |\n| Carol Wu   | Design Director  | London        |\n\n---\n\n## Tables: Data-Heavy\n\nTables handle numeric data well. Column alignment follows standard Markdown syntax.\n\n| Quarter | Revenue   | Expenses  | Profit    | Margin |\n|---------|----------:|----------:|----------:|-------:|\n| Q1 2025 | $2.4M     | $1.8M     | $0.6M     | 25.0%  |\n| Q2 2025 | $2.9M     | $1.9M     | $1.0M     | 34.5%  |\n| Q3 2025 | $3.1M     | $2.0M     | $1.1M     | 35.5%  |\n| Q4 2025 | $3.8M     | $2.2M     | $1.6M     | 42.1%  |\n\n> Revenue grew 58% year-over-year, with margins expanding from 25% to 42%.\n\n---\n\n## Tables: Comparison Layout\n\nUse tables as a two-column layout for side-by-side comparisons:\n\n| Before (2023)                  | After (2025)                    |\n|--------------------------------|---------------------------------|\n| Manual deploys, twice weekly   | Automated CI/CD, on every merge |\n| 45-minute rollback process     | 30-second automated rollback    |\n| No test coverage tracking      | 94% coverage with dashboard     |\n| Incidents discovered by users  | Proactive alerting catches 98%  |\n| 4-hour incident response       | 12-minute mean time to resolve  |\n\n---\n\n## Code Blocks: Python\n\nFenced code blocks render in IBM Plex Mono with syntax highlighting. Colors are mapped to Carbon\'s palette: blue for numbers and constants, green for strings, red for keywords, and gray for comments.\n\n```python\ndef calculate_retention(cohort_data: dict) -> float:\n    """Calculate 30-day retention rate for a user cohort."""\n    initial_users = cohort_data["day_0"]\n    retained_users = cohort_data["day_30"]\n\n    if initial_users == 0:\n        return 0.0\n\n    return (retained_users / initial_users) * 100\n```\n\nThe function above takes a cohort dictionary and returns a percentage. Notice how `inline code` in the surrounding text uses the same monospace font.\n\n---\n\n## Code Blocks: JavaScript\n\n```javascript\nasync function fetchSlides(url) {\n  const response = await fetch(url);\n  if (!response.ok) {\n    throw new Error(`Failed to load: ${response.status}`);\n  }\n  const markdown = await response.text();\n  return markdown.split(/\\n\\s*---\\s*\\n/);\n}\n```\n\n---\n\n## Code Blocks: Shell Commands\n\n```bash\n# Clone the repo and start presenting\ngit clone https://github.com/yourname/your-slides.git\ncd your-slides\n\n# Edit your slides\nvim slides.md\n\n# Push to deploy on GitHub Pages\ngit add slides.md\ngit commit -m "Update slide deck"\ngit push origin main\n```\n\n---\n\n## Code Blocks: JSON and Config\n\n```json\n{\n  "name": "carbon-slides",\n  "version": "1.0.0",\n  "description": "Markdown slides with Carbon design tokens",\n  "slides": "slides.md",\n  "theme": {\n    "light": "white",\n    "dark": "gray-100"\n  }\n}\n```\n\n---\n\n## Code Blocks: CSS\n\n```css\n.slide h2 {\n  font-size: var(--cds-heading-05);\n  font-weight: 300;\n  line-height: 1.25;\n  letter-spacing: 0;\n  margin-bottom: var(--cds-spacing-06);\n  color: var(--cds-text-primary);\n}\n```\n\nThis is the actual CSS used to style slide titles in this template. The light font weight at large sizes is a hallmark of Carbon\'s expressive type scale.\n\n---\n\n## Images\n\nReference images from your repo with standard Markdown syntax:\n\n![Placeholder: architecture diagram](https://placehold.co/800x400/f4f4f4/161616?text=Architecture+Diagram)\n\n*Figure 1: System architecture overview. Images are capped at 100% width and centered with Carbon spacing.*\n\n---\n\n## Images with Context\n\nImages work best when surrounded by explanatory text:\n\nThe dashboard below shows the key metrics we track weekly. The top row covers acquisition, the bottom row covers retention.\n\n![Placeholder: dashboard screenshot](https://placehold.co/800x300/e0e0e0/525252?text=Dashboard+Screenshot)\n\n*Figure 2: Weekly metrics dashboard. Replace this placeholder with an actual screenshot from your repo\'s images folder.*\n\nNote how the caption renders in a smaller size with secondary text color, creating a clear visual distinction from body text.\n\n---\n\n## Mermaid: Flowchart (TD)\n\nTop-down flowcharts for processes and decision trees:\n\n```mermaid\nflowchart TD\n    A[User submits form] --> B{Input valid?}\n    B -->|Yes| C[Save to database]\n    B -->|No| D[Show error message]\n    C --> E{Send notification?}\n    E -->|Yes| F[Email confirmation]\n    E -->|No| G[Show success page]\n    F --> G\n    D --> A\n```\n\n---\n\n## Mermaid: Flowchart (LR)\n\nLeft-to-right flowcharts for pipelines and horizontal processes:\n\n```mermaid\nflowchart LR\n    A[Markdown] --> B[marked.js<br/>parser]\n    B --> C[HTML sections]\n    C --> D[Carbon CSS<br/>tokens]\n    D --> E[Styled slides]\n\n    F[Mermaid blocks] --> G[Mermaid.js<br/>renderer]\n    G --> H[SVG diagrams]\n    H --> E\n```\n\n---\n\n## Mermaid: Flowchart with Subgraphs\n\nSubgraphs group related nodes into labeled clusters:\n\n```mermaid\nflowchart TD\n    subgraph Frontend\n        A[React App] --> B[Component Library]\n        B --> C[Carbon Components]\n    end\n\n    subgraph Backend\n        D[API Gateway] --> E[Auth Service]\n        D --> F[Data Service]\n        F --> G[(PostgreSQL)]\n    end\n\n    subgraph Infrastructure\n        H[Load Balancer] --> D\n        A --> H\n    end\n```\n\n---\n\n## Mermaid: Sequence Diagram\n\nSequence diagrams show interactions between actors over time:\n\n```mermaid\nsequenceDiagram\n    participant U as User\n    participant B as Browser\n    participant S as Server\n    participant DB as Database\n\n    U->>B: Click "Submit"\n    B->>S: POST /api/data\n    S->>DB: INSERT record\n    DB-->>S: OK (row id: 42)\n    S-->>B: 201 Created\n    B-->>U: Show success message\n\n    Note over S,DB: Transaction completes<br/>in under 50ms\n```\n\n---\n\n## Mermaid: Gantt Chart\n\nGantt charts for project timelines and phased rollouts:\n\n```mermaid\ngantt\n    title Product Launch Timeline\n    dateFormat YYYY-MM-DD\n    axisFormat %b %d\n\n    section Research\n        User interviews       :done, r1, 2025-01-06, 2025-01-24\n        Competitive analysis   :done, r2, 2025-01-13, 2025-02-07\n        Requirements doc       :done, r3, 2025-02-03, 2025-02-14\n\n    section Design\n        Wireframes             :done, d1, 2025-02-10, 2025-02-28\n        Visual design           :done, d2, 2025-02-24, 2025-03-14\n        Prototype               :active, d3, 2025-03-10, 2025-03-28\n\n    section Development\n        Sprint 1 (core)         :dev1, 2025-03-24, 2025-04-11\n        Sprint 2 (features)     :dev2, 2025-04-14, 2025-05-02\n        Sprint 3 (polish)       :dev3, 2025-05-05, 2025-05-23\n\n    section Launch\n        Beta release            :milestone, 2025-05-26, 0d\n        Public launch           :crit, 2025-06-09, 2025-06-13\n```\n\n---\n\n## Mermaid: Pie Chart\n\nPie charts for proportional data:\n\n```mermaid\npie title Traffic Sources (Q4 2025)\n    "Organic Search" : 42\n    "Direct" : 24\n    "Social Media" : 18\n    "Email Campaigns" : 11\n    "Referrals" : 5\n```\n\n> Organic search drives nearly half of all traffic, reinforcing the case for continued SEO investment.\n\n---\n\n## Mermaid: Entity-Relationship Diagram\n\nER diagrams for data models and database schemas:\n\n```mermaid\nerDiagram\n    USER ||--o{ ORDER : places\n    USER {\n        int id PK\n        string name\n        string email\n        date created_at\n    }\n    ORDER ||--|{ LINE_ITEM : contains\n    ORDER {\n        int id PK\n        int user_id FK\n        date order_date\n        string status\n    }\n    LINE_ITEM {\n        int id PK\n        int order_id FK\n        int product_id FK\n        int quantity\n        float price\n    }\n    PRODUCT ||--o{ LINE_ITEM : "appears in"\n    PRODUCT {\n        int id PK\n        string name\n        float price\n        string category\n    }\n```\n\n---\n\n## Mermaid: State Diagram\n\nState diagrams for modeling lifecycle and status transitions:\n\n```mermaid\nstateDiagram-v2\n    [*] --> Draft\n    Draft --> Review : Submit\n    Review --> Approved : Approve\n    Review --> Draft : Request changes\n    Approved --> Published : Publish\n    Published --> Archived : Archive\n    Archived --> Draft : Reactivate\n    Review --> Rejected : Reject\n    Rejected --> Draft : Revise\n    Published --> [*]\n```\n\n---\n\n## Mermaid: Class Diagram\n\nClass diagrams for object-oriented design and API structure:\n\n```mermaid\nclassDiagram\n    class SlideParser {\n        -String markdownSource\n        -List~Slide~ slides\n        +parse(md: String) List~Slide~\n        +getSlideCount() int\n    }\n\n    class Slide {\n        -int index\n        -String title\n        -String htmlContent\n        -boolean isTitleSlide\n        +render() HTMLElement\n    }\n\n    class ThemeManager {\n        -String currentTheme\n        -Map~String,String~ lightTokens\n        -Map~String,String~ darkTokens\n        +toggle() void\n        +getToken(name: String) String\n    }\n\n    class MermaidRenderer {\n        -Object config\n        +initialize(isDark: boolean) void\n        +renderAll() void\n    }\n\n    SlideParser "1" --> "*" Slide : creates\n    ThemeManager --> MermaidRenderer : configures\n    SlideParser --> ThemeManager : reads theme\n```\n\n---\n\n## Combining Elements\n\nThe most effective slides combine multiple element types. Here is a realistic example mixing a paragraph, table, diagram, and callout:\n\nCustomer support response times have improved dramatically since adopting the tiered routing system.\n\n| Tier     | Avg. Response | Resolution Rate |\n|----------|---------------|-----------------|\n| Tier 1   | 4 minutes     | 68%             |\n| Tier 2   | 22 minutes    | 89%             |\n| Tier 3   | 2 hours       | 97%             |\n\n```mermaid\nflowchart LR\n    A[Incoming<br/>ticket] --> B{Auto-classify}\n    B -->|Simple| C[Tier 1<br/>Bot + FAQ]\n    B -->|Medium| D[Tier 2<br/>Support agent]\n    B -->|Complex| E[Tier 3<br/>Engineering]\n```\n\n> Auto-classification routes 61% of tickets to Tier 1, where they resolve in under 5 minutes without human intervention.\n\n---\n\n## Links\n\nStandard Markdown links render with Carbon\'s interactive blue:\n\n- Visit the [Carbon Design System](https://carbondesignsystem.com/) for full documentation\n- Browse the [component library on GitHub](https://github.com/carbon-design-system/carbon)\n- Read the [typography guidelines](https://carbondesignsystem.com/elements/typography/overview/)\n\nLinks also work inline: the IBM Plex typeface is available on [GitHub](https://github.com/IBM/plex) under the SIL Open Font License.\n\n---\n\n## Speaker Notes\n\nThis slide has invisible speaker notes embedded as HTML comments. They will not appear in the rendered output, but are visible when editing the Markdown source.\n\n<!-- NOTES: This is a speaker note. Only you can see it in the raw .md file. Use these to remind yourself of talking points, timing cues, or audience questions to anticipate. -->\n\nYou can verify this by viewing the raw `slides.md` file -- the notes are there between comment tags.\n\n<!-- NOTES: Another note. You can have multiple comment blocks per slide. Mention the Q3 results here and reference the earlier data table. -->\n\n---\n\n## Element Reference Summary\n\n| Element                | Markdown syntax                      | Carbon treatment                            |\n|------------------------|--------------------------------------|---------------------------------------------|\n| Deck title             | `# Title`                            | 54px, weight 300, expressive                |\n| Subtitle               | `### Subtitle`                       | 28px, weight 300, secondary color           |\n| Presenter line         | `> Name -- Date`                     | Blockquote, no border on title slide        |\n| Slide title            | `## Title`                           | 32px, weight 300, expressive                |\n| Sub-heading            | `### Heading`                        | 20px, weight 600                            |\n| Body text              | Plain paragraph                      | 16px, weight 400, 42rem max-width           |\n| Bold                   | `**text**`                           | Semibold 600 (not 700)                      |\n| Italic                 | `*text*`                             | Standard italic                             |\n| Inline code            | `` `code` ``                         | IBM Plex Mono, gray background              |\n| Code block             | Triple backtick with lang            | Plex Mono, Carbon-themed syntax colors      |\n| Blockquote             | `> text`                             | Blue left border, gray fill                 |\n| Unordered list         | `- item`                             | Standard bullets, Carbon spacing            |\n| Ordered list           | `1. item`                            | Numbered, Carbon spacing                    |\n| Nested list            | Indented `- item`                    | Up to 3 levels supported                    |\n| Task list (unchecked)  | `- [ ] item`                         | Carbon-styled empty checkbox                |\n| Task list (checked)    | `- [x] item`                         | Filled blue checkbox with checkmark         |\n| Table                  | Pipe-delimited                       | Carbon data table with hover rows           |\n| Image                  | `![alt](path)`                       | Max-width 100%, centered                    |\n| Image caption          | `*Caption*` after image              | Smaller size, secondary color               |\n| Link                   | `[text](url)`                        | Interactive blue, visited purple            |\n| Speaker notes          | `<!-- NOTES: text -->`               | Hidden in rendered output                   |\n| Slide separator        | `---`                                | Subtle border between sections              |\n| Mermaid flowchart      | `` ```mermaid flowchart``` ``        | Carbon tokens in nodes and edges            |\n| Mermaid sequence       | `` ```mermaid sequenceDiagram``` ``  | Carbon colors for actors and messages       |\n| Mermaid Gantt          | `` ```mermaid gantt``` ``            | Blue/gray task bars, red for critical       |\n| Mermaid pie            | `` ```mermaid pie``` ``              | Proportional segments                       |\n| Mermaid ER             | `` ```mermaid erDiagram``` ``        | Carbon node and border colors               |\n| Mermaid state          | `` ```mermaid stateDiagram-v2``` ``  | Carbon fills with Carbon connectors         |\n| Mermaid class          | `` ```mermaid classDiagram``` ``     | Carbon fills and border styling             |\n| Dark theme             | Nav bar toggle button                | All tokens swap to Gray 100 palette         |\n\n---\n\n## Thank You\n\n- GitHub: github.com/jimweaver\n- Email: jim@example.com\n\n> Questions?\n\n<!-- NOTES: Open the floor for questions. Have the Element Reference Summary slide ready to scroll back to if anyone asks about a specific element. -->\n';
+
+    async function loadSlides() {
+      var md;
+      try {
+        var resp = await fetch(SLIDES_FILE);
+        if (!resp.ok) throw new Error('not found');
+        md = await resp.text();
+      } catch (e) {
+        md = DEMO;
+      }
+      renderSlides(md);
+      setupScrollTracking();
+
+      // Post-process: syntax highlighting
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+
+      // Post-process: add class to task list parent ULs for styling
+      var taskItems = document.querySelectorAll('.task-list-item');
+      taskItems.forEach(function(item) {
+        var parent = item.parentElement;
+        if (parent && parent.tagName === 'UL') {
+          parent.classList.add('contains-task-list');
+        }
+      });
+
+      // Post-process: extract footer text from title slide blockquote
+      // and inject a per-slide footer into every non-title slide
+      var titleSlide = document.querySelector('.slide.title-slide');
+      var slides = document.querySelectorAll('.slide');
+      if (titleSlide) {
+        var bq = titleSlide.querySelector('blockquote');
+        if (bq) {
+          var footerText = bq.textContent.trim();
+          var nonTitleSlides = document.querySelectorAll('.slide:not(.title-slide)');
+          nonTitleSlides.forEach(function(slide, idx) {
+            var footer = document.createElement('div');
+            footer.className = 'slide-footer';
+            footer.innerHTML =
+              '<span class="slide-footer-text">' + footerText + '</span>' +
+              '<span class="slide-footer-page">' + (idx + 2) + ' / ' + slides.length + '</span>';
+            slide.appendChild(footer);
+          });
+        }
+      }
+
+      // Post-process: if the title slide has both an image and a subtitle (h3),
+      // wrap them in a flex row with the logo on the left and subtitle on the right.
+      if (titleSlide) {
+        var titleImg = titleSlide.querySelector('img');
+        var titleH3 = titleSlide.querySelector('h3');
+
+        if (titleImg) {
+          // Unwrap the img from the <p> tag that marked.js generates
+          var imgParent = titleImg.parentElement;
+          if (imgParent && imgParent.tagName === 'P') {
+            imgParent.replaceWith(titleImg);
+          }
+          titleImg.classList.add('title-logo');
+
+          if (titleH3) {
+            // Create a flex row containing the logo (left) and subtitle (right)
+            var row = document.createElement('div');
+            row.className = 'title-subtitle-row';
+            titleH3.parentNode.insertBefore(row, titleH3);
+            row.appendChild(titleImg);
+            row.appendChild(titleH3);
+          }
+        }
+      }
+
+      // Load mermaid async so it never blocks slide rendering
+      var script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js';
+      script.onload = function() {
+        try {
+          mermaid.initialize(getMermaidConfig(
+            document.documentElement.classList.contains('dark-theme')
+          ));
+          renderMermaid();
+        } catch(e) {
+          console.warn('Mermaid setup failed:', e);
+        }
+      };
+      script.onerror = function() {
+        console.warn('Mermaid CDN failed to load');
+      };
+      document.body.appendChild(script);
+    }
+
+    loadSlides();
+  </script>
+
+</body>
+</html>

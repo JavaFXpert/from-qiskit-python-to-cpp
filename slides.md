@@ -200,11 +200,25 @@ CMake auto-discovers Qiskit C API paths from pip and links the Python library �
 
 ---
 
-## Step 4: (Optional) Hardware Credentials
+## Step 4: (Optional) Hardware Examples Setup
 
-For examples 08 and 09 you need **qiskit-ibm-runtime-c** and an IBM Quantum account.
+Examples 08 and 09 require **qiskit-ibm-runtime-c** and an IBM Quantum account.
 
-Set credentials via environment variables:
+### Install qiskit-ibm-runtime-c
+
+Requires: Rust compiler (`rustc`), `cargo`, and `cbindgen`.
+
+```bash
+git clone https://github.com/Qiskit/qiskit-ibm-runtime-c.git
+cd qiskit-ibm-runtime-c
+mkdir build && cd build
+cmake ..
+make
+```
+
+### Configure credentials
+
+Set via environment variables:
 
 ```bash
 export QISKIT_IBM_TOKEN="your-api-key"
@@ -220,7 +234,14 @@ Or save to `~/.qiskit/qiskit-ibm.json`:
 }
 ```
 
-> Examples 01–08 work entirely offline. No credentials needed.
+### Build the hardware examples
+
+```bash
+cmake -DENABLE_HARDWARE_EXAMPLES=ON ..
+make
+```
+
+> **Note:** qiskit-ibm-runtime-c is early-stage software. Examples 08–09 demonstrate the API pattern; full Qiskit 2.4 compatibility is expected in a future release. Examples 01–07 work entirely offline.
 
 ---
 

@@ -20,7 +20,7 @@ execute_process(
 if(_qk_inc_rc OR _qk_lib_rc)
   message(FATAL_ERROR
     "Could not locate Qiskit C API. "
-    "Install with: pip install \"qiskit>=2.4.0rc1\"")
+    "Install with: python3 -m pip install \"qiskit>=2.4.0rc1\"")
 endif()
 
 get_filename_component(QISKIT_LIB_DIR "${QISKIT_LIB}" DIRECTORY)

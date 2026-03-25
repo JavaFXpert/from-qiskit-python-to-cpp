@@ -40,7 +40,7 @@ QISKIT_VER=$(python3 -c "import qiskit; print(qiskit.__version__)" 2>/dev/null |
 if [ -n "$QISKIT_VER" ]; then
   echo -e "$OK  qiskit $QISKIT_VER"
 else
-  echo -e "$FAIL  qiskit not installed (pip install "qiskit>=2.4.0rc1")"
+  echo -e "$FAIL  qiskit not installed (python3 -m pip install "qiskit>=2.4.0rc1")"
   errors=$((errors + 1))
 fi
 

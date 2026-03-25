@@ -115,9 +115,20 @@ cmake --version
 python3 --version
 ```
 
-> **Apple Silicon note:** Ensure your `cmake` is arm64, not x86_64. Check with `file $(which cmake)`. If it shows x86_64, install a native build: `/opt/homebrew/bin/brew install cmake`.
+> **Apple Silicon Macs:** Your tools must be arm64, not x86_64. Check with `file $(which cmake)`. If it shows x86_64, install the native arm64 Homebrew and cmake, then add it to your PATH:
 
-<!-- NOTES: Pause here. Let everyone confirm their compilers are working. The Apple Silicon issue is subtle — an x86_64 cmake will launch x86_64 Python, which can't load arm64 Qiskit .so files. -->
+```bash
+# Install arm64 Homebrew (one-time, if not already at /opt/homebrew)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install arm64 cmake
+/opt/homebrew/bin/brew install cmake
+
+# Add to PATH (add this line to ~/.zshrc to make permanent)
+export PATH="/opt/homebrew/bin:$PATH"
+```
+
+<!-- NOTES: Pause here. Let everyone confirm their compilers are working. The Apple Silicon issue is subtle — an x86_64 cmake will launch x86_64 Python, which can't load arm64 Qiskit .so files. If anyone has issues, check file $(which cmake) and file $(which python3). -->
 
 ---
 

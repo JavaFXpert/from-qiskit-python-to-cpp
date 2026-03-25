@@ -24,10 +24,10 @@
 ## The Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Python<br/>Qiskit SDK] --> B[Rust Core<br/>qiskit-crate]
-    B --> C[C API<br/>qiskit.h]
-    C --> D[C++ Headers<br/>qiskit-cpp]
+    D[C++ Headers<br/>qiskit-cpp] --> C[C API<br/>qiskit.h]
+    C --> B
     style B fill:#0f62fe,color:#fff
 ```
 

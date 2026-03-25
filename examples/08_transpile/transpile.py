@@ -16,7 +16,7 @@ print(qc)
 
 # Connect to IBM Quantum and transpile for a real backend
 service = QiskitRuntimeService()
-backend = service.backend("ibm_torino")
+backend = service.backend("ibm_fez")
 pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
 transpiled = pm.run(qc)
 

@@ -22,7 +22,7 @@ int main() {
 
     // Connect, transpile, and run
     auto service = Qiskit::service::QiskitRuntimeService();
-    auto backend = service.backend("ibm_torino");
+    auto backend = service.backend("ibm_fez");
     auto pm = generate_preset_pass_manager(2, backend);
     auto transpiled = pm.run(circ);
 

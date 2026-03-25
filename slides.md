@@ -732,7 +732,7 @@ from qiskit.transpiler.preset_passmanagers import (
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 service = QiskitRuntimeService()
-backend = service.backend("ibm_torino")
+backend = service.backend("ibm_fez")
 pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
 transpiled = pm.run(qc)
 ```
@@ -744,12 +744,16 @@ transpiled = pm.run(qc)
 #include "service/qiskit_runtime_service.hpp"
 
 auto service = Qiskit::service::QiskitRuntimeService();
-auto backend = service.backend("ibm_torino");
+auto backend = service.backend("ibm_fez");
 auto pm = generate_preset_pass_manager(2, backend);
 auto transpiled = pm.run(circ);
 ```
 
 > Same function name, same pattern. Requires IBM Quantum credentials.
+
+### What happens here
+
+Transpilation runs **locally on your machine** — it only connects to IBM Quantum to fetch the backend's target description (gate set, coupling map, qubit properties). No quantum job is submitted.
 
 ### Checkpoint
 
@@ -814,7 +818,9 @@ auto meas_data = pub_result.data("meas");
 auto counts = meas_data.get_counts();
 ```
 
-<!-- NOTES: Walk through each line. Highlight the SamplerPub wrapper and the data() accessor. -->
+Unlike transpilation, `sampler.run()` **submits a quantum job** to the real hardware. Your circuit is sent to the processor, executed with the specified number of shots, and the bitstring results are returned.
+
+<!-- NOTES: Walk through each line. Highlight the SamplerPub wrapper and the data() accessor. Emphasize: this is real hardware execution, not simulation. -->
 
 ---
 

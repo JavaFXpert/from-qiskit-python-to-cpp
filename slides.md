@@ -53,7 +53,7 @@ Seven modules that mirror the Python SDK:
 | `providers` | Job, BackendV2 |
 | `quantum_info` | SparseObservable |
 | `service` | QiskitRuntimeService |
-| `transpiler` | Target, StagedPassManager |
+| `transpiler` | Target, generate_preset_pass_manager |
 
 - **Header-only** — no compilation of qiskit-cpp itself
 - **C++11** compatible — works with GCC, Clang, MSVC
@@ -656,57 +656,58 @@ from qiskit.transpiler.preset_passmanagers import (
     generate_preset_pass_manager,
 )
 
-target = Target(num_qubits=4)
-target.add_instruction(HGate(), {(i,): ... for i in range(4)})
-target.add_instruction(CXGate(), {(0,1): ..., (1,0): ..., ...})
-
-pm = generate_preset_pass_manager(optimization_level=2, target=target)
+pm = generate_preset_pass_manager(
+    optimization_level=2,
+    basis_gates=["h", "cx"],
+    coupling_map=[(0,1),(1,0),(1,2),(2,1),(2,3),(3,2)],
+)
 transpiled = pm.run(qc)
 ```
 
 ### C++
 
 ```cpp
-#include "transpiler/target.hpp"
-#include "transpiler/staged_pass_manager.hpp"
+#include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
 
-auto target = Target(
-    {"h", "cx"},
-    {{0,1}, {1,0}, {1,2}, {2,1}, {2,3}, {3,2}}
+auto pm = generate_preset_pass_manager(
+    2,  // optimization_level
+    std::vector<std::string>{"h", "cx"},
+    std::vector<std::pair<uint32_t, uint32_t>>{
+        {0,1}, {1,0}, {1,2}, {2,1}, {2,3}, {3,2}
+    }
 );
-
-auto pass = StagedPassManager(
-    {"init", "layout", "routing", "translation", "optimization"},
-    target
-);
-auto transpiled = pass.run(circ);
+auto transpiled = pm.run(circ);
 ```
 
-<!-- NOTES: Emphasize that no hardware credentials are needed. The Target is defined locally. -->
+> Same function name, same concept — `generate_preset_pass_manager` works in both languages.
+
+<!-- NOTES: Emphasize that no hardware credentials are needed. The target is defined locally via basis gates and coupling map. -->
 
 ---
 
-## Understanding the Target
+## Understanding `generate_preset_pass_manager`
 
-The `Target` constructor takes two arguments:
+The function takes an optimization level and a hardware description:
 
-1. **Gate names** — vector of supported gates: `{"h", "cx"}`
-2. **Coupling map** — vector of qubit pairs: `{{0,1}, {1,0}, {1,2}, ...}`
+| Parameter | Python | C++ |
+|-----------|--------|-----|
+| Optimization level | `optimization_level=2` | `2` (first argument) |
+| Supported gates | `basis_gates=["h", "cx"]` | `std::vector<std::string>{"h", "cx"}` |
+| Qubit connectivity | `coupling_map=[(0,1), ...]` | `std::vector<std::pair<uint32_t,uint32_t>>{{0,1}, ...}` |
 
 ```mermaid
 flowchart LR
     Q0((0)) --- Q1((1)) --- Q2((2)) --- Q3((3))
 ```
 
-The `StagedPassManager` runs five stages:
+The returned pass manager runs these stages internally: init, layout, routing, translation, optimization, scheduling.
 
-| Stage | Purpose |
-|-------|---------|
-| `init` | Initial decomposition |
-| `layout` | Virtual-to-physical qubit mapping |
-| `routing` | Insert SWAPs for connectivity |
-| `translation` | Convert to target gate set |
-| `optimization` | Reduce depth and gate count |
+C++ also supports passing a `Target` or `BackendV2` object instead of basis gates + coupling map:
+
+```cpp
+auto pm = generate_preset_pass_manager(2, backend);  // from BackendV2
+auto pm = generate_preset_pass_manager(2, target);   // from Target
+```
 
 ---
 
@@ -753,7 +754,7 @@ cmake -DENABLE_HARDWARE_EXAMPLES=ON .. && make
 | Gate set | You define it | Fetched from device |
 | Coupling map | You define it | Real device topology |
 | Use case | Testing, offline dev | Production runs |
-| C++ API | `Target` + `StagedPassManager` | `transpile(circ, backend)` |
+| C++ API | `generate_preset_pass_manager()` | `transpile(circ, backend)` |
 
 > Use local targets for development and testing. Switch to a real backend when ready to run.
 

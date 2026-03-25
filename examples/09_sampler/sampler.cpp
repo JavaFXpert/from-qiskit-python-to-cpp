@@ -1,9 +1,9 @@
-// Example 10: Sampler — Full end-to-end: build, transpile, sample, process.
-// Requires: qiskit-ibm-runtime-c and IBM Quantum credentials.
+// Example 09: Sampler — Full end-to-end: build, transpile, sample, process.
+// Requires: QRMI and IBM Quantum credentials.
 
 #include "circuit/quantumcircuit.hpp"
 #include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
-#include "primitives/sampler.hpp"
+#include "primitives/backend_sampler_v2.hpp"
 #include "service/qiskit_runtime_service.hpp"
 
 using namespace Qiskit::circuit;

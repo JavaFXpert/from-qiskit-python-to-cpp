@@ -800,7 +800,7 @@ counts = result[0].data.c.get_counts()
 
 ```cpp
 #include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
-#include "primitives/sampler.hpp"
+#include "primitives/backend_sampler_v2.hpp"
 
 auto pm = generate_preset_pass_manager(2, backend);
 auto transpiled = pm.run(circ);

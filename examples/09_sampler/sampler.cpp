@@ -27,7 +27,8 @@ int main() {
     auto transpiled = pm.run(circ);
 
     auto sampler = BackendSamplerV2(backend, 100);  // 100 shots
-    auto result = sampler.run({SamplerPub(transpiled)});
+    auto job = sampler.run({SamplerPub(transpiled)});
+    auto result = job->result();
 
     // Process results
     auto pub_result = result[0];

@@ -806,7 +806,8 @@ auto pm = generate_preset_pass_manager(2, backend);
 auto transpiled = pm.run(circ);
 
 auto sampler = BackendSamplerV2(backend, 100);
-auto result = sampler.run({SamplerPub(transpiled)});
+auto job = sampler.run({SamplerPub(transpiled)});
+auto result = job->result();
 
 auto pub_result = result[0];
 auto meas_data = pub_result.data("meas");
@@ -915,7 +916,7 @@ auto meas_data = pub_result.data("meas");
 | **Bind** | `qc.assign_parameters({t: 1.57})` | `circ.assign_parameters({"t"}, {1.57});` |
 | **Transpile** | `generate_preset_pass_manager(backend=backend)` | `generate_preset_pass_manager(2, backend)` |
 | **Sampler** | `SamplerV2(backend)` | `BackendSamplerV2(backend, shots)` |
-| **Run** | `sampler.run([qc]).result()` | `sampler.run({SamplerPub(circ)})` |
+| **Run** | `sampler.run([qc]).result()` | `sampler.run({SamplerPub(circ)})->result()` |
 | **Counts** | `result[0].data.c.get_counts()` | `result[0].data("meas").get_counts()` |
 
 ---

@@ -79,7 +79,6 @@ add_workshop_example(ghz_circuit      04_ghz_circuit)
 add_workshop_example(parameterized    05_parameterized)
 add_workshop_example(observables      06_observables)
 add_workshop_example(compose_append   07_compose_append)
-add_workshop_example(local_transpile  08_local_transpile)
 
 # ---------------------------------------------------------------------------
 # Hardware examples (require qiskit-ibm-runtime-c and credentials)
@@ -88,6 +87,6 @@ option(ENABLE_HARDWARE_EXAMPLES
   "Build examples that require IBM Quantum credentials" OFF)
 
 if(ENABLE_HARDWARE_EXAMPLES)
-  add_workshop_example(backend_transpile 09_backend_transpile)
-  add_workshop_example(sampler           10_sampler)
+  add_workshop_example(transpile 08_transpile)
+  add_workshop_example(sampler   09_sampler)
 endif()

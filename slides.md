@@ -90,11 +90,11 @@ The APIs are **nearly identical**. Here's a GHZ circuit in both:
 5. **Parameters** — symbolic parameters and binding
 6. **Observables** — SparseObservable construction
 7. **Composition** — building circuits from sub-circuits
-8. **Transpilation** — local Target and real backend
+8. **Transpilation** — `generate_preset_pass_manager` with a real backend
 9. **Sampling** — end-to-end execution on hardware
 10. **Wrap-Up** — cheat sheet and resources
 
-> Examples 01–08 run locally. Examples 09–10 require IBM Quantum credentials.
+> Examples 01–07 run locally. Examples 08–09 require IBM Quantum credentials.
 
 ---
 
@@ -195,7 +195,7 @@ execute_process(
 
 ## Step 4: (Optional) Hardware Credentials
 
-For examples 09 and 10 you need **qiskit-ibm-runtime-c** and an IBM Quantum account.
+For examples 08 and 09 you need **qiskit-ibm-runtime-c** and an IBM Quantum account.
 
 Set credentials via environment variables:
 
@@ -647,71 +647,42 @@ Transpilation converts your abstract circuit into one that:
 
 ---
 
-## Example 08: Local Transpilation
+## Understanding `generate_preset_pass_manager`
 
-### Python
+`generate_preset_pass_manager` is the unified transpilation API in both Python and C++. It accepts several overloads:
 
-```python
-from qiskit.transpiler.preset_passmanagers import (
-    generate_preset_pass_manager,
-)
-
-pm = generate_preset_pass_manager(
-    optimization_level=2,
-    basis_gates=["h", "cx"],
-    coupling_map=[(0,1),(1,0),(1,2),(2,1),(2,3),(3,2)],
-)
-transpiled = pm.run(qc)
-```
-
-### C++
+### From a backend (most common)
 
 ```cpp
-#include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
+auto pm = generate_preset_pass_manager(2, backend);
+auto transpiled = pm.run(circ);
+```
 
+### From basis gates and coupling map (offline testing)
+
+```cpp
 auto pm = generate_preset_pass_manager(
-    2,  // optimization_level
+    2,
     std::vector<std::string>{"h", "cx"},
     std::vector<std::pair<uint32_t, uint32_t>>{
         {0,1}, {1,0}, {1,2}, {2,1}, {2,3}, {3,2}
     }
 );
-auto transpiled = pm.run(circ);
 ```
 
-> Same function name, same concept — `generate_preset_pass_manager` works in both languages.
+### From a Target object
 
-<!-- NOTES: Emphasize that no hardware credentials are needed. The target is defined locally via basis gates and coupling map. -->
-
----
-
-## Understanding `generate_preset_pass_manager`
-
-The function takes an optimization level and a hardware description:
-
-| Parameter | Python | C++ |
-|-----------|--------|-----|
-| Optimization level | `optimization_level=2` | `2` (first argument) |
-| Supported gates | `basis_gates=["h", "cx"]` | `std::vector<std::string>{"h", "cx"}` |
-| Qubit connectivity | `coupling_map=[(0,1), ...]` | `std::vector<std::pair<uint32_t,uint32_t>>{{0,1}, ...}` |
-
-```mermaid
-flowchart LR
-    Q0((0)) --- Q1((1)) --- Q2((2)) --- Q3((3))
+```cpp
+auto pm = generate_preset_pass_manager(2, target);
 ```
 
 The returned pass manager runs these stages internally: init, layout, routing, translation, optimization, scheduling.
 
-C++ also supports passing a `Target` or `BackendV2` object instead of basis gates + coupling map:
-
-```cpp
-auto pm = generate_preset_pass_manager(2, backend);  // from BackendV2
-auto pm = generate_preset_pass_manager(2, target);   // from Target
-```
+> One function, multiple overloads — pass a backend for production, or basis gates + coupling map for offline testing.
 
 ---
 
-## Example 09: Backend Transpilation
+## Example 08: Transpilation
 
 ### Python
 
@@ -739,28 +710,14 @@ auto pm = generate_preset_pass_manager(2, backend);
 auto transpiled = pm.run(circ);
 ```
 
-> Same function — `generate_preset_pass_manager` — whether local or backend. Requires IBM Quantum credentials.
+> Same function name, same pattern. Requires IBM Quantum credentials.
 
 ### Checkpoint
 
 ```bash
 cmake -DENABLE_HARDWARE_EXAMPLES=ON .. && make
-./backend_transpile
+./transpile
 ```
-
----
-
-## Local vs Backend Transpilation
-
-| Aspect | Local Target (Ex. 08) | Backend (Ex. 09) |
-|--------|----------------------|-------------------|
-| Credentials | None | IBM Quantum account |
-| Gate set | You define it | Fetched from device |
-| Coupling map | You define it | Real device topology |
-| Use case | Testing, offline dev | Production runs |
-| C++ API | `generate_preset_pass_manager(2, basis, coupling)` | `generate_preset_pass_manager(2, backend)` |
-
-> Use local targets for development and testing. Switch to a real backend when ready to run.
 
 ---
 
@@ -784,7 +741,7 @@ flowchart LR
 
 ---
 
-## Example 10: Full End-to-End
+## Example 09: Full End-to-End
 
 ### Python
 

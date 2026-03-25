@@ -43,6 +43,25 @@ endif()
 message(STATUS "qiskit-cpp headers: ${QISKIT_CPP_SRC}")
 
 # ---------------------------------------------------------------------------
+# Python library (needed at runtime by Qiskit's _accelerate.abi3.so)
+# ---------------------------------------------------------------------------
+find_package(Python3 COMPONENTS Development)
+if(NOT Python3_FOUND)
+  # Fallback: discover Python library path manually
+  execute_process(
+    COMMAND python3 -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))"
+    OUTPUT_VARIABLE _py_libdir OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(
+    COMMAND python3 -c "import sysconfig; print(sysconfig.get_config_var('LDLIBRARY'))"
+    OUTPUT_VARIABLE _py_ldlib OUTPUT_STRIP_TRAILING_WHITESPACE)
+  find_library(PYTHON_LIB NAMES "${_py_ldlib}" python3 PATHS "${_py_libdir}" NO_DEFAULT_PATH)
+  message(STATUS "Python library (fallback): ${PYTHON_LIB}")
+else()
+  set(PYTHON_LIB Python3::Python)
+  message(STATUS "Python library: ${Python3_LIBRARIES}")
+endif()
+
+# ---------------------------------------------------------------------------
 # Dependencies
 # ---------------------------------------------------------------------------
 find_package(Threads REQUIRED)
@@ -62,6 +81,7 @@ function(add_workshop_example NAME DIR)
     ${QISKIT_CPP_SRC})
   target_link_libraries(${NAME} PRIVATE
     "${QISKIT_LIB}"
+    ${PYTHON_LIB}
     nlohmann_json::nlohmann_json
     Threads::Threads)
   set_target_properties(${NAME} PROPERTIES

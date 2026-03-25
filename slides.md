@@ -115,7 +115,9 @@ cmake --version
 python3 --version
 ```
 
-<!-- NOTES: Pause here. Let everyone confirm their compilers are working. -->
+> **Apple Silicon note:** Ensure your `cmake` is arm64, not x86_64. Check with `file $(which cmake)`. If it shows x86_64, install a native build: `/opt/homebrew/bin/brew install cmake`.
+
+<!-- NOTES: Pause here. Let everyone confirm their compilers are working. The Apple Silicon issue is subtle — an x86_64 cmake will launch x86_64 Python, which can't load arm64 Qiskit .so files. -->
 
 ---
 
@@ -171,27 +173,19 @@ qiskit-cpp is **header-only** — the `src/` directory IS the include path. No c
 ```bash
 cd examples
 mkdir build && cd build
-cmake -DQISKIT_CPP_SRC=/path/to/qiskit-cpp/src ..
+cmake ..
 make
 ```
 
-The workshop's `CMakeLists.txt` auto-discovers Qiskit paths from pip:
+If you cloned qiskit-cpp as a sibling directory (Step 2), CMake finds it automatically. Otherwise, pass the path explicitly:
 
-```cmake
-execute_process(
-  COMMAND python3 -c
-    "import qiskit.capi; print(qiskit.capi.get_include())"
-  OUTPUT_VARIABLE QISKIT_INCLUDE
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-execute_process(
-  COMMAND python3 -c
-    "import qiskit.capi; print(qiskit.capi.get_lib())"
-  OUTPUT_VARIABLE QISKIT_LIB
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
+```bash
+cmake -DQISKIT_CPP_SRC=/path/to/qiskit-cpp/src ..
 ```
 
-> No manual path configuration needed — CMake queries Python directly.
+CMake auto-discovers Qiskit C API paths from pip and links the Python library — no manual configuration needed.
+
+> If `cmake` fails on Apple Silicon, use the arm64 build: `/opt/homebrew/bin/cmake ..`
 
 ---
 

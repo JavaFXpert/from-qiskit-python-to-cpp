@@ -34,6 +34,8 @@ if(NOT QISKIT_CPP_SRC)
   set(QISKIT_CPP_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../qiskit-cpp/src"
       CACHE PATH "Path to qiskit-cpp src/ directory")
 endif()
+# Convert to absolute path so the compiler can find headers from any build dir
+get_filename_component(QISKIT_CPP_SRC "${QISKIT_CPP_SRC}" ABSOLUTE)
 
 if(NOT EXISTS "${QISKIT_CPP_SRC}/circuit/quantumcircuit.hpp")
   message(FATAL_ERROR

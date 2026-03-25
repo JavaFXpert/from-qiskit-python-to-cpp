@@ -209,11 +209,13 @@ Examples 08 and 09 require **qiskit-ibm-runtime-c** and an IBM Quantum account.
 Requires: Rust compiler (`rustc`), `cargo`, and `cbindgen`.
 
 ```bash
+cd ../..                # back to parent directory (alongside qiskit-cpp)
 git clone https://github.com/Qiskit/qiskit-ibm-runtime-c.git
 cd qiskit-ibm-runtime-c
 mkdir build && cd build
 cmake ..
 make
+cd ../../from-qiskit-python-to-cpp   # back to project
 ```
 
 ### Configure credentials

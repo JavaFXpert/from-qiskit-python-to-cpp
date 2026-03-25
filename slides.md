@@ -658,7 +658,7 @@ auto pm = generate_preset_pass_manager(2, backend);
 auto transpiled = pm.run(circ);
 ```
 
-### From basis gates and coupling map (offline testing)
+### From basis gates and coupling map
 
 ```cpp
 auto pm = generate_preset_pass_manager(

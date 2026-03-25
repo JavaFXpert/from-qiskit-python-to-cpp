@@ -202,20 +202,27 @@ CMake auto-discovers Qiskit C API paths from pip and links the Python library �
 
 ## Step 4: (Optional) Hardware Examples Setup
 
-Examples 08 and 09 require **qiskit-ibm-runtime-c** and an IBM Quantum account.
+Examples 08 and 09 require **QRMI** (Qiskit Remote Machine Interface) and an IBM Quantum account.
 
-### Install qiskit-ibm-runtime-c
+### Install QRMI
 
-Requires: Rust compiler (`rustc`), `cargo`, and `cbindgen`.
+Requires: Rust 1.91+ (`rustc`, `cargo`).
 
 ```bash
-cd ../..                # back to parent directory (alongside qiskit-cpp)
-git clone https://github.com/Qiskit/qiskit-ibm-runtime-c.git
-cd qiskit-ibm-runtime-c
-mkdir build && cd build
-cmake ..
-make
-cd ../../from-qiskit-python-to-cpp   # back to project
+cd ../..                # parent directory (alongside qiskit-cpp)
+git clone https://github.com/qiskit-community/qrmi.git
+cd qrmi
+cargo build --locked --release
+cd ../from-qiskit-python-to-cpp
+```
+
+Your directory layout should now look like:
+
+```
+parent-folder/
+├── from-qiskit-python-to-cpp/
+├── qiskit-cpp/
+└── qrmi/
 ```
 
 ### Configure credentials
@@ -224,15 +231,17 @@ Set via environment variables:
 
 ```bash
 export QISKIT_IBM_TOKEN="your-api-key"
-export QISKIT_IBM_INSTANCE="ibm-q/open/main"
+export QISKIT_IBM_INSTANCE="your-crn"
 ```
 
 Or save to `~/.qiskit/qiskit-ibm.json`:
 
 ```json
 {
-  "default_instance": "ibm-q/open/main",
-  "token": "your-api-key"
+  "ibm_quantum": {
+    "token": "your-api-key",
+    "instance": "your-crn"
+  }
 }
 ```
 
@@ -243,7 +252,7 @@ cmake -DENABLE_HARDWARE_EXAMPLES=ON ..
 make
 ```
 
-> **Note:** qiskit-ibm-runtime-c is early-stage software. Examples 08–09 demonstrate the API pattern; full Qiskit 2.4 compatibility is expected in a future release. Examples 01–07 work entirely offline.
+> Examples 01–07 work entirely offline. Examples 08–09 use QRMI, the same interface used by the official qiskit-cpp samples.
 
 ---
 
@@ -931,7 +940,7 @@ auto meas_data = pub_result.data("meas");
 - **Qiskit C API docs**: [quantum.cloud.ibm.com/docs/en/api/qiskit-c](https://quantum.cloud.ibm.com/docs/en/api/qiskit-c)
 - **Qiskit documentation**: [docs.quantum.ibm.com](https://docs.quantum.ibm.com)
 - **IBM Quantum Platform**: [quantum.cloud.ibm.com](https://quantum.cloud.ibm.com)
-- **qiskit-ibm-runtime-c**: [github.com/Qiskit/qiskit-ibm-runtime-c](https://github.com/Qiskit/qiskit-ibm-runtime-c)
+- **QRMI**: [github.com/qiskit-community/qrmi](https://github.com/qiskit-community/qrmi)
 
 Install Qiskit with C API:
 

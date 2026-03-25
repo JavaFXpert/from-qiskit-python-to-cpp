@@ -103,54 +103,48 @@ add_workshop_example(observables      06_observables)
 add_workshop_example(compose_append   07_compose_append)
 
 # ---------------------------------------------------------------------------
-# Hardware examples (require qiskit-ibm-runtime-c and credentials)
+# Hardware examples (require QRMI and IBM Quantum credentials)
 # ---------------------------------------------------------------------------
 option(ENABLE_HARDWARE_EXAMPLES
   "Build examples that require IBM Quantum credentials" OFF)
 
 if(ENABLE_HARDWARE_EXAMPLES)
-  # Locate qiskit-ibm-runtime-c (sibling directory)
-  if(NOT QISKIT_IBM_RUNTIME_C)
-    set(QISKIT_IBM_RUNTIME_C "${CMAKE_CURRENT_SOURCE_DIR}/../../qiskit-ibm-runtime-c"
-        CACHE PATH "Path to qiskit-ibm-runtime-c directory")
+  # Locate QRMI (sibling directory)
+  if(NOT QRMI_ROOT)
+    set(QRMI_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../qrmi"
+        CACHE PATH "Path to QRMI directory")
   endif()
-  get_filename_component(QISKIT_IBM_RUNTIME_C "${QISKIT_IBM_RUNTIME_C}" ABSOLUTE)
+  get_filename_component(QRMI_ROOT "${QRMI_ROOT}" ABSOLUTE)
 
-  set(_QKRT_INCLUDE "${QISKIT_IBM_RUNTIME_C}/include")
-  set(_QKRT_LIB_DIR "${QISKIT_IBM_RUNTIME_C}/build/cargo/debug")
-  find_library(QKRT_LIB NAMES qiskit_ibm_runtime PATHS "${_QKRT_LIB_DIR}" NO_DEFAULT_PATH)
+  set(_QRMI_LIB_DIR "${QRMI_ROOT}/target/release")
+  find_library(QRMI_LIB NAMES qrmi PATHS "${_QRMI_LIB_DIR}" NO_DEFAULT_PATH)
 
-  # Also need the Qiskit C API built by qiskit-ibm-runtime-c
-  set(_QKRT_QISKIT_INCLUDE "${QISKIT_IBM_RUNTIME_C}/build/qiskit_srcdir/dist/c/include")
-  set(_QKRT_QISKIT_LIB_DIR "${QISKIT_IBM_RUNTIME_C}/build/qiskit_srcdir/dist/c/lib")
-  find_library(QKRT_QISKIT_LIB NAMES qiskit PATHS "${_QKRT_QISKIT_LIB_DIR}" NO_DEFAULT_PATH)
-
-  if(NOT QKRT_LIB)
+  if(NOT QRMI_LIB)
     message(FATAL_ERROR
-      "qiskit-ibm-runtime-c library not found at ${_QKRT_LIB_DIR}. "
-      "Build it first: cd qiskit-ibm-runtime-c/build && cmake .. && make")
+      "QRMI library not found at ${_QRMI_LIB_DIR}. "
+      "Build it first: cd qrmi && cargo build --locked --release")
   endif()
 
-  message(STATUS "qiskit-ibm-runtime-c include: ${_QKRT_INCLUDE}")
-  message(STATUS "qiskit-ibm-runtime-c library: ${QKRT_LIB}")
+  message(STATUS "QRMI root: ${QRMI_ROOT}")
+  message(STATUS "QRMI library: ${QRMI_LIB}")
 
   function(add_hardware_example NAME DIR)
     add_executable(${NAME} ${DIR}/${NAME}.cpp)
     target_include_directories(${NAME} PRIVATE
       ${QISKIT_INCLUDE}
       ${QISKIT_CPP_SRC}
-      ${_QKRT_INCLUDE}
-      ${_QKRT_QISKIT_INCLUDE})
+      ${QRMI_ROOT})
+    target_compile_options(${NAME} PRIVATE "-DQRMI_ROOT=${QRMI_ROOT}")
+    target_link_directories(${NAME} PUBLIC "${_QRMI_LIB_DIR}")
     target_link_libraries(${NAME} PRIVATE
       "${QISKIT_LIB}"
-      "${QKRT_LIB}"
-      "${QKRT_QISKIT_LIB}"
+      qrmi
       ${PYTHON_LIB}
       nlohmann_json::nlohmann_json
       Threads::Threads)
     set_target_properties(${NAME} PROPERTIES
-      BUILD_RPATH "${QISKIT_LIB_DIR};${_QKRT_LIB_DIR};${_QKRT_QISKIT_LIB_DIR}"
-      INSTALL_RPATH "${QISKIT_LIB_DIR};${_QKRT_LIB_DIR};${_QKRT_QISKIT_LIB_DIR}")
+      BUILD_RPATH "${QISKIT_LIB_DIR};${_QRMI_LIB_DIR}"
+      INSTALL_RPATH "${QISKIT_LIB_DIR};${_QRMI_LIB_DIR}")
   endfunction()
 
   add_hardware_example(transpile 08_transpile)

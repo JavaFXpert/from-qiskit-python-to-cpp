@@ -1,7 +1,7 @@
 """Example 09: Backend Transpilation — Transpile for a real IBM backend."""
 
 from qiskit import QuantumCircuit
-from qiskit.compiler import transpile
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 # Build circuit
@@ -17,7 +17,8 @@ print(qc)
 # Connect to IBM Quantum and transpile for a real backend
 service = QiskitRuntimeService()
 backend = service.backend("ibm_torino")
-transpiled = transpile(qc, backend, optimization_level=2)
+pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+transpiled = pm.run(qc)
 
 print(f"\nTranspiled for {backend.name}:")
 print(transpiled)

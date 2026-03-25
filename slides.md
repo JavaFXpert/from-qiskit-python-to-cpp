@@ -48,7 +48,7 @@ Seven modules that mirror the Python SDK:
 | Module | Purpose |
 |--------|---------|
 | `circuit` | QuantumCircuit, registers, gates, Parameters |
-| `compiler` | `transpile()` function |
+| `compiler` | `transpile()` convenience function |
 | `primitives` | Sampler (BackendSamplerV2) |
 | `providers` | Job, BackendV2 |
 | `quantum_info` | SparseObservable |
@@ -716,26 +716,30 @@ auto pm = generate_preset_pass_manager(2, target);   // from Target
 ### Python
 
 ```python
-from qiskit.compiler import transpile
+from qiskit.transpiler.preset_passmanagers import (
+    generate_preset_pass_manager,
+)
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 service = QiskitRuntimeService()
 backend = service.backend("ibm_torino")
-transpiled = transpile(qc, backend, optimization_level=2)
+pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+transpiled = pm.run(qc)
 ```
 
 ### C++
 
 ```cpp
-#include "compiler/transpile.hpp"
+#include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
 #include "service/qiskit_runtime_service.hpp"
 
 auto service = Qiskit::service::QiskitRuntimeService();
 auto backend = service.backend("ibm_torino");
-auto transpiled = Qiskit::compiler::transpile(circ, backend);
+auto pm = generate_preset_pass_manager(2, backend);
+auto transpiled = pm.run(circ);
 ```
 
-> Same function, same backend name, same result. Requires IBM Quantum credentials.
+> Same function — `generate_preset_pass_manager` — whether local or backend. Requires IBM Quantum credentials.
 
 ### Checkpoint
 
@@ -754,7 +758,7 @@ cmake -DENABLE_HARDWARE_EXAMPLES=ON .. && make
 | Gate set | You define it | Fetched from device |
 | Coupling map | You define it | Real device topology |
 | Use case | Testing, offline dev | Production runs |
-| C++ API | `generate_preset_pass_manager()` | `transpile(circ, backend)` |
+| C++ API | `generate_preset_pass_manager(2, basis, coupling)` | `generate_preset_pass_manager(2, backend)` |
 
 > Use local targets for development and testing. Switch to a real backend when ready to run.
 
@@ -787,6 +791,9 @@ flowchart LR
 ```python
 from qiskit_ibm_runtime import SamplerV2
 
+pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+transpiled = pm.run(qc)
+
 sampler = SamplerV2(backend)
 job = sampler.run([transpiled], shots=100)
 result = job.result()
@@ -796,7 +803,11 @@ counts = result[0].data.c.get_counts()
 ### C++
 
 ```cpp
+#include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
 #include "primitives/sampler.hpp"
+
+auto pm = generate_preset_pass_manager(2, backend);
+auto transpiled = pm.run(circ);
 
 auto sampler = BackendSamplerV2(backend, 100);
 auto result = sampler.run({SamplerPub(transpiled)});
@@ -906,7 +917,7 @@ auto meas_data = pub_result.data("meas");
 | **Measure** | `qc.measure([0,1], [0,1])` | `circ.measure(qr, cr);` |
 | **Parameter** | `Parameter('t')` | `Parameter t("t");` |
 | **Bind** | `qc.assign_parameters({t: 1.57})` | `circ.assign_parameters({"t"}, {1.57});` |
-| **Transpile** | `transpile(qc, backend)` | `Qiskit::compiler::transpile(circ, backend);` |
+| **Transpile** | `generate_preset_pass_manager(backend=backend)` | `generate_preset_pass_manager(2, backend)` |
 | **Sampler** | `SamplerV2(backend)` | `BackendSamplerV2(backend, shots)` |
 | **Run** | `sampler.run([qc]).result()` | `sampler.run({SamplerPub(circ)})` |
 | **Counts** | `result[0].data.c.get_counts()` | `result[0].data("meas").get_counts()` |

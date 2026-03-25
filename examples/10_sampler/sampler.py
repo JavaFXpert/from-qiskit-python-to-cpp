@@ -1,7 +1,7 @@
 """Example 10: Sampler — Full end-to-end: build, transpile, sample, process."""
 
 from qiskit import QuantumCircuit
-from qiskit.compiler import transpile
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 
 # Build a Bell state circuit
@@ -13,7 +13,8 @@ qc.measure([0, 1], [0, 1])
 # Connect, transpile, and run
 service = QiskitRuntimeService()
 backend = service.backend("ibm_torino")
-transpiled = transpile(qc, backend, optimization_level=2)
+pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+transpiled = pm.run(qc)
 
 sampler = SamplerV2(backend)
 job = sampler.run([transpiled], shots=100)

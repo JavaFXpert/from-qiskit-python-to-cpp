@@ -2,10 +2,11 @@
 // Requires: qiskit-ibm-runtime-c and IBM Quantum credentials.
 
 #include "circuit/quantumcircuit.hpp"
-#include "compiler/transpile.hpp"
+#include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
 #include "service/qiskit_runtime_service.hpp"
 
 using namespace Qiskit::circuit;
+using namespace Qiskit::transpiler;
 
 int main() {
     // Build circuit
@@ -24,7 +25,8 @@ int main() {
     // Connect to IBM Quantum and transpile for a real backend
     auto service = Qiskit::service::QiskitRuntimeService();
     auto backend = service.backend("ibm_torino");
-    auto transpiled = Qiskit::compiler::transpile(circ, backend);
+    auto pm = generate_preset_pass_manager(2, backend);
+    auto transpiled = pm.run(circ);
 
     std::cout << "\nTranspiled circuit:" << std::endl;
     transpiled.print();

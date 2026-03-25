@@ -2,11 +2,12 @@
 // Requires: qiskit-ibm-runtime-c and IBM Quantum credentials.
 
 #include "circuit/quantumcircuit.hpp"
-#include "compiler/transpile.hpp"
+#include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
 #include "primitives/sampler.hpp"
 #include "service/qiskit_runtime_service.hpp"
 
 using namespace Qiskit::circuit;
+using namespace Qiskit::transpiler;
 using namespace Qiskit::primitives;
 
 int main() {
@@ -22,7 +23,8 @@ int main() {
     // Connect, transpile, and run
     auto service = Qiskit::service::QiskitRuntimeService();
     auto backend = service.backend("ibm_torino");
-    auto transpiled = Qiskit::compiler::transpile(circ, backend);
+    auto pm = generate_preset_pass_manager(2, backend);
+    auto transpiled = pm.run(circ);
 
     auto sampler = BackendSamplerV2(backend, 100);  // 100 shots
     auto result = sampler.run({SamplerPub(transpiled)});

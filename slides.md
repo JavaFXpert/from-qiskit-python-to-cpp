@@ -122,7 +122,7 @@ python3 --version
 ## Step 1: Install Qiskit 2.4
 
 ```bash
-pip install qiskit>=2.4.0rc1
+pip install "qiskit>=2.4.0rc1"
 ```
 
 Since Qiskit 2.4, the **C header and shared library** are bundled in the pip package. No more `git clone qiskit && make c`.
@@ -906,7 +906,7 @@ auto meas_data = pub_result.data("meas");
 Install Qiskit with C API:
 
 ```bash
-pip install qiskit>=2.4.0rc1
+pip install "qiskit>=2.4.0rc1"
 ```
 
 ---

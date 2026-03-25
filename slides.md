@@ -143,24 +143,26 @@ python3 -c "import qiskit.capi; print(qiskit.capi.get_lib())"
 
 ## Step 2: Get the qiskit-cpp Headers
 
+Clone qiskit-cpp as a **sibling** of your project directory (one-time setup):
+
 ```bash
+cd ..
 git clone https://github.com/Qiskit/qiskit-cpp.git
+cd from-qiskit-python-to-cpp
 ```
 
-qiskit-cpp is **header-only** — the `src/` directory IS the include path. No compilation step.
+Your directory layout should look like:
 
 ```
-qiskit-cpp/
-└── src/
-    ├── circuit/quantumcircuit.hpp
-    ├── compiler/transpile.hpp
-    ├── primitives/sampler.hpp
-    ├── quantum_info/sparse_observable.hpp
-    ├── transpiler/target.hpp
-    └── ...
+parent-folder/
+├── from-qiskit-python-to-cpp/   # your project
+└── qiskit-cpp/                  # cloned here
+    └── src/                     # header-only include path
 ```
 
-<!-- NOTES: Point out that src/ is the only directory they need. Everything else is tests and samples. -->
+qiskit-cpp is **header-only** — the `src/` directory IS the include path. No compilation step. This single clone works for any C++ project that uses Qiskit.
+
+<!-- NOTES: This is a one-time setup. The CMakeLists.txt defaults to ../qiskit-cpp/src so it finds the headers automatically. -->
 
 ---
 

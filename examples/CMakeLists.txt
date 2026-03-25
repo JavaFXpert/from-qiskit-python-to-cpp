@@ -109,6 +109,50 @@ option(ENABLE_HARDWARE_EXAMPLES
   "Build examples that require IBM Quantum credentials" OFF)
 
 if(ENABLE_HARDWARE_EXAMPLES)
-  add_workshop_example(transpile 08_transpile)
-  add_workshop_example(sampler   09_sampler)
+  # Locate qiskit-ibm-runtime-c (sibling directory)
+  if(NOT QISKIT_IBM_RUNTIME_C)
+    set(QISKIT_IBM_RUNTIME_C "${CMAKE_CURRENT_SOURCE_DIR}/../../qiskit-ibm-runtime-c"
+        CACHE PATH "Path to qiskit-ibm-runtime-c directory")
+  endif()
+  get_filename_component(QISKIT_IBM_RUNTIME_C "${QISKIT_IBM_RUNTIME_C}" ABSOLUTE)
+
+  set(_QKRT_INCLUDE "${QISKIT_IBM_RUNTIME_C}/include")
+  set(_QKRT_LIB_DIR "${QISKIT_IBM_RUNTIME_C}/build/cargo/debug")
+  find_library(QKRT_LIB NAMES qiskit_ibm_runtime PATHS "${_QKRT_LIB_DIR}" NO_DEFAULT_PATH)
+
+  # Also need the Qiskit C API built by qiskit-ibm-runtime-c
+  set(_QKRT_QISKIT_INCLUDE "${QISKIT_IBM_RUNTIME_C}/build/qiskit_srcdir/dist/c/include")
+  set(_QKRT_QISKIT_LIB_DIR "${QISKIT_IBM_RUNTIME_C}/build/qiskit_srcdir/dist/c/lib")
+  find_library(QKRT_QISKIT_LIB NAMES qiskit PATHS "${_QKRT_QISKIT_LIB_DIR}" NO_DEFAULT_PATH)
+
+  if(NOT QKRT_LIB)
+    message(FATAL_ERROR
+      "qiskit-ibm-runtime-c library not found at ${_QKRT_LIB_DIR}. "
+      "Build it first: cd qiskit-ibm-runtime-c/build && cmake .. && make")
+  endif()
+
+  message(STATUS "qiskit-ibm-runtime-c include: ${_QKRT_INCLUDE}")
+  message(STATUS "qiskit-ibm-runtime-c library: ${QKRT_LIB}")
+
+  function(add_hardware_example NAME DIR)
+    add_executable(${NAME} ${DIR}/${NAME}.cpp)
+    target_include_directories(${NAME} PRIVATE
+      ${QISKIT_INCLUDE}
+      ${QISKIT_CPP_SRC}
+      ${_QKRT_INCLUDE}
+      ${_QKRT_QISKIT_INCLUDE})
+    target_link_libraries(${NAME} PRIVATE
+      "${QISKIT_LIB}"
+      "${QKRT_LIB}"
+      "${QKRT_QISKIT_LIB}"
+      ${PYTHON_LIB}
+      nlohmann_json::nlohmann_json
+      Threads::Threads)
+    set_target_properties(${NAME} PROPERTIES
+      BUILD_RPATH "${QISKIT_LIB_DIR};${_QKRT_LIB_DIR};${_QKRT_QISKIT_LIB_DIR}"
+      INSTALL_RPATH "${QISKIT_LIB_DIR};${_QKRT_LIB_DIR};${_QKRT_QISKIT_LIB_DIR}")
+  endfunction()
+
+  add_hardware_example(transpile 08_transpile)
+  add_hardware_example(sampler   09_sampler)
 endif()

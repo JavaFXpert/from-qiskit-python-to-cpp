@@ -1,7 +1,9 @@
 # From Qiskit Python to C++
 ### Building quantum programs with the qiskit-cpp SDK
 
-> IBM Quantum Workshop — 2026
+![Logo](https://www.ibm.com/design/language/877b208e9d05b37650a70e55867861bd/core_gray60_on_white.svg)
+
+> James L. Weaver : IBM Quantum Education: 26 March 2026
 
 <!-- NOTES: Welcome everyone. This workshop assumes familiarity with Qiskit in Python. We'll systematically translate that knowledge into C++. -->
 
@@ -209,7 +211,7 @@ Examples 08 and 09 require **QRMI** (Qiskit Remote Machine Interface) and an IBM
 Requires: Rust 1.91+ (`rustc`, `cargo`).
 
 ```bash
-cd ../..                # parent directory (alongside qiskit-cpp)
+cd ../../..                # parent directory (alongside qiskit-cpp)
 git clone https://github.com/qiskit-community/qrmi.git
 cd qrmi
 cargo build --locked --release

@@ -36,18 +36,27 @@ int main() {
     auto counts = meas_data.get_counts();
 
     // Find max count for scaling the histogram
+    int num_qubits = 2;
+    int num_states = 1 << num_qubits;  // 2^num_qubits
     int max_count = 0;
     for (auto& kv : counts) {
         if (kv.second > max_count) max_count = kv.second;
     }
 
-    // Display histogram
+    // Display histogram for all computational basis states in order
     std::cout << "Measurement results:" << std::endl;
-    for (auto& kv : counts) {
-        int bar_len = (max_count > 0) ? kv.second * 40 / max_count : 0;
-        std::cout << "  " << kv.first << " | ";
-        for (int i = 0; i < bar_len; i++) std::cout << "\u2588";
-        std::cout << " " << kv.second << std::endl;
+    for (int i = 0; i < num_states; i++) {
+        std::string state;
+        for (int b = num_qubits - 1; b >= 0; b--) {
+            state += ((i >> b) & 1) ? '1' : '0';
+        }
+        int count = 0;
+        auto it = counts.find(state);
+        if (it != counts.end()) count = it->second;
+        int bar_len = (max_count > 0) ? count * 40 / max_count : 0;
+        std::cout << "  " << state << " | ";
+        for (int j = 0; j < bar_len; j++) std::cout << "\u2588";
+        std::cout << " " << count << std::endl;
     }
 
     return 0;

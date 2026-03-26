@@ -80,7 +80,8 @@ function(add_workshop_example NAME DIR)
   add_executable(${NAME} ${DIR}/${NAME}.cpp)
   target_include_directories(${NAME} PRIVATE
     ${QISKIT_INCLUDE}
-    ${QISKIT_CPP_SRC})
+    ${QISKIT_CPP_SRC}
+    ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${NAME} PRIVATE
     "${QISKIT_LIB}"
     ${PYTHON_LIB}
@@ -133,6 +134,7 @@ if(ENABLE_HARDWARE_EXAMPLES)
     target_include_directories(${NAME} PRIVATE
       ${QISKIT_INCLUDE}
       ${QISKIT_CPP_SRC}
+      ${CMAKE_CURRENT_SOURCE_DIR}
       ${QRMI_ROOT})
     target_compile_options(${NAME} PRIVATE "-DQRMI_ROOT=${QRMI_ROOT}")
     target_link_directories(${NAME} PUBLIC "${_QRMI_LIB_DIR}")

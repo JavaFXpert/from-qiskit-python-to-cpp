@@ -14,6 +14,14 @@ using namespace Qiskit::circuit;
 using namespace Qiskit::transpiler;
 using namespace Qiskit::primitives;
 
+std::string center(const std::string& text, int width) {
+    int pad = width - (int)text.size();
+    if (pad <= 0) return text;
+    int left = pad / 2;
+    int right = pad - left;
+    return std::string(left, ' ') + text + std::string(right, ' ');
+}
+
 void print_histogram(const std::unordered_map<std::string, unsigned long long>& counts,
                      int num_qubits, int height = 16, int col_width = 7) {
     int num_states = 1 << num_qubits;
@@ -61,14 +69,14 @@ void print_histogram(const std::unordered_map<std::string, unsigned long long>& 
     for (int row = height; row >= 1; row--) {
         for (int col = 0; col < num_states; col++) {
             if (bar_heights[col] == row) {
-                // Top of this bar: print count label
-                std::cout << std::setw(col_width) << values[col];
+                // Top of this bar: print count label centered
+                std::cout << center(std::to_string(values[col]), col_width);
             } else if (bar_heights[col] > row) {
                 // Body of this bar
                 std::cout << block_mid;
             } else if (bar_heights[col] == 0 && row == 1) {
-                // Zero count: show the number just above the baseline
-                std::cout << std::setw(col_width) << values[col];
+                // Zero count: show the number centered just above baseline
+                std::cout << center(std::to_string(values[col]), col_width);
             } else {
                 std::cout << blank;
             }
@@ -82,9 +90,9 @@ void print_histogram(const std::unordered_map<std::string, unsigned long long>& 
     }
     std::cout << "\n";
 
-    // State labels
+    // State labels centered
     for (int col = 0; col < num_states; col++) {
-        std::cout << std::setw(col_width) << states[col];
+        std::cout << center(states[col], col_width);
     }
     std::cout << std::endl;
 }

@@ -35,9 +35,19 @@ int main() {
     auto meas_data = pub_result.data("meas");
     auto counts = meas_data.get_counts();
 
+    // Find max count for scaling the histogram
+    int max_count = 0;
+    for (auto& kv : counts) {
+        if (kv.second > max_count) max_count = kv.second;
+    }
+
+    // Display histogram
     std::cout << "Measurement results:" << std::endl;
     for (auto& kv : counts) {
-        std::cout << "  " << kv.first << ": " << kv.second << std::endl;
+        int bar_len = (max_count > 0) ? kv.second * 40 / max_count : 0;
+        std::cout << "  " << kv.first << " | ";
+        for (int i = 0; i < bar_len; i++) std::cout << "\u2588";
+        std::cout << " " << kv.second << std::endl;
     }
 
     return 0;

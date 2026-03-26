@@ -5,7 +5,7 @@
 #include "transpiler/preset_passmanagers/generate_preset_pass_manager.hpp"
 #include "primitives/backend_sampler_v2.hpp"
 #include "service/qiskit_runtime_service.hpp"
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <iomanip>
@@ -14,14 +14,14 @@ using namespace Qiskit::circuit;
 using namespace Qiskit::transpiler;
 using namespace Qiskit::primitives;
 
-void print_histogram(const std::map<std::string, int>& counts,
+void print_histogram(const std::unordered_map<std::string, unsigned long long>& counts,
                      int num_qubits, int height = 16, int col_width = 7) {
     int num_states = 1 << num_qubits;
 
     // Build ordered list of states and their counts
     std::vector<std::string> states;
-    std::vector<int> values;
-    int max_count = 0;
+    std::vector<unsigned long long> values;
+    unsigned long long max_count = 0;
     for (int i = 0; i < num_states; i++) {
         std::string state;
         for (int b = num_qubits - 1; b >= 0; b--) {
@@ -29,7 +29,7 @@ void print_histogram(const std::map<std::string, int>& counts,
         }
         states.push_back(state);
         auto it = counts.find(state);
-        int count = (it != counts.end()) ? it->second : 0;
+        unsigned long long count = (it != counts.end()) ? it->second : 0;
         values.push_back(count);
         if (count > max_count) max_count = count;
     }

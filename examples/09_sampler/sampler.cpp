@@ -34,16 +34,27 @@ void print_histogram(const std::unordered_map<std::string, unsigned long long>& 
         if (count > max_count) max_count = count;
     }
 
-    // Compute scaled bar heights
+    // Compute scaled bar heights (minimum 1 if count > 0, so small bars show)
     std::vector<int> bar_heights(num_states);
     for (int col = 0; col < num_states; col++) {
-        bar_heights[col] = (max_count > 0) ? values[col] * height / max_count : 0;
+        if (values[col] == 0) {
+            bar_heights[col] = 0;
+        } else {
+            int h = (int)(values[col] * height / max_count);
+            bar_heights[col] = (h < 1) ? 1 : h;
+        }
     }
 
-    // Build the bar block string once
-    std::string block = " ";
-    for (int k = 0; k < col_width - 2; k++) block += "\xe2\x96\x88";
-    block += " ";
+    // Build the bar block: use upper-half + lower-half blocks for solid fill
+    // Each row prints two half-blocks to eliminate the gap between lines
+    std::string block_top = " ";
+    std::string block_mid = " ";
+    for (int k = 0; k < col_width - 2; k++) {
+        block_top += "\xe2\x96\x84";  // lower half block (fills bottom of line above)
+        block_mid += "\xe2\x96\x88";  // full block
+    }
+    block_top += " ";
+    block_mid += " ";
     std::string blank(col_width, ' ');
 
     // Draw rows from top to bottom
@@ -53,8 +64,11 @@ void print_histogram(const std::unordered_map<std::string, unsigned long long>& 
                 // Top of this bar: print count label
                 std::cout << std::setw(col_width) << values[col];
             } else if (bar_heights[col] > row) {
-                // Body of this bar: print block
-                std::cout << block;
+                // Body of this bar
+                std::cout << block_mid;
+            } else if (bar_heights[col] == 0 && row == 1) {
+                // Zero count: show the number just above the baseline
+                std::cout << std::setw(col_width) << values[col];
             } else {
                 std::cout << blank;
             }

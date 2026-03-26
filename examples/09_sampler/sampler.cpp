@@ -15,7 +15,7 @@ using namespace Qiskit::transpiler;
 using namespace Qiskit::primitives;
 
 void print_histogram(const std::map<std::string, int>& counts,
-                     int num_qubits, int height = 20, int col_width = 6) {
+                     int num_qubits, int height = 16, int col_width = 7) {
     int num_states = 1 << num_qubits;
 
     // Build ordered list of states and their counts
@@ -34,47 +34,39 @@ void print_histogram(const std::map<std::string, int>& counts,
         if (count > max_count) max_count = count;
     }
 
-    // Draw bars top-down, row by row
-    for (int row = height; row >= 1; row--) {
-        int threshold = max_count * row / height;
-        for (int col = 0; col < num_states; col++) {
-            if (values[col] >= threshold && threshold > 0) {
-                // Print count label on the top row of each bar
-                if (row == height || max_count * (row + 1) / height > values[col]) {
-                    std::cout << std::setw(col_width) << values[col];
-                } else {
-                    std::string bar(col_width - 1, '\xe2' == '\xe2' ? ' ' : ' ');
-                    std::cout << " ";
-                    for (int k = 0; k < col_width - 2; k++) std::cout << "\u2588";
-                    std::cout << " ";
-                }
-            } else {
-                std::cout << std::string(col_width, ' ');
-            }
-        }
-        std::cout << std::endl;
+    // Compute scaled bar heights
+    std::vector<int> bar_heights(num_states);
+    for (int col = 0; col < num_states; col++) {
+        bar_heights[col] = (max_count > 0) ? values[col] * height / max_count : 0;
+    }
 
-        // Print bar blocks for this row
-        if (row > 1) {
-            for (int col = 0; col < num_states; col++) {
-                int bar_threshold = max_count * (row - 1) / height;
-                if (values[col] > bar_threshold && bar_threshold >= 0) {
-                    std::cout << " ";
-                    for (int k = 0; k < col_width - 2; k++) std::cout << "\u2588";
-                    std::cout << " ";
-                } else {
-                    std::cout << std::string(col_width, ' ');
-                }
+    // Build the bar block string once
+    std::string block = " ";
+    for (int k = 0; k < col_width - 2; k++) block += "\xe2\x96\x88";
+    block += " ";
+    std::string blank(col_width, ' ');
+
+    // Draw rows from top to bottom
+    for (int row = height; row >= 1; row--) {
+        for (int col = 0; col < num_states; col++) {
+            if (bar_heights[col] == row) {
+                // Top of this bar: print count label
+                std::cout << std::setw(col_width) << values[col];
+            } else if (bar_heights[col] > row) {
+                // Body of this bar: print block
+                std::cout << block;
+            } else {
+                std::cout << blank;
             }
-            std::cout << std::endl;
         }
+        std::cout << "\n";
     }
 
     // Baseline
-    for (int col = 0; col < num_states; col++) {
-        for (int k = 0; k < col_width; k++) std::cout << "\u2500";
+    for (int col = 0; col < num_states * col_width; col++) {
+        std::cout << "\xe2\x94\x80";
     }
-    std::cout << std::endl;
+    std::cout << "\n";
 
     // State labels
     for (int col = 0; col < num_states; col++) {

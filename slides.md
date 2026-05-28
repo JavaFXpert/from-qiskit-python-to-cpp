@@ -106,7 +106,7 @@ Before we start, you'll need:
 
 - [x] **C++11 compiler** — `g++` or `clang++`
 - [x] **CMake** 3.11 or later
-- [x] **Python** 3.9 or later with `pip`
+- [x] **Python** 3.10 or later with `pip`
 - [ ] (Optional) **IBM Quantum account** for hardware examples
 
 Verify your tools:
@@ -137,7 +137,7 @@ export PATH="/opt/homebrew/bin:$PATH"
 ## Step 1: Install Qiskit 2.4
 
 ```bash
-python3 -m pip install "qiskit>=2.4.0rc1"
+python3 -m pip install "qiskit>=2.4.1"
 ```
 
 Since Qiskit 2.4, the **C header and shared library** are bundled in the pip package. No more `git clone qiskit && make c`.
@@ -153,6 +153,14 @@ python3 -c "import qiskit.capi; print(qiskit.capi.get_lib())"
 ```
 
 > These two paths are all CMake needs to link your C++ code against Qiskit.
+
+**Running the lab notebook locally?** Also install notebook + visualization deps:
+
+```bash
+python3 -m pip install notebook ipykernel networkx matplotlib
+```
+
+(Not needed for Colab; those packages are pre-installed there.)
 
 ---
 
@@ -942,14 +950,14 @@ auto meas_data = pub_result.data("meas");
 
 - **qiskit-cpp SDK**: [github.com/Qiskit/qiskit-cpp](https://github.com/Qiskit/qiskit-cpp)
 - **Qiskit C API docs**: [quantum.cloud.ibm.com/docs/en/api/qiskit-c](https://quantum.cloud.ibm.com/docs/en/api/qiskit-c)
-- **Qiskit documentation**: [docs.quantum.ibm.com](https://docs.quantum.ibm.com)
+- **Qiskit documentation**: [quantum.cloud.ibm.com/docs](https://quantum.cloud.ibm.com/docs)
 - **IBM Quantum Platform**: [quantum.cloud.ibm.com](https://quantum.cloud.ibm.com)
 - **QRMI**: [github.com/qiskit-community/qrmi](https://github.com/qiskit-community/qrmi)
 
 Install Qiskit with C API:
 
 ```bash
-python3 -m pip install "qiskit>=2.4.0rc1"
+python3 -m pip install "qiskit>=2.4.1"
 ```
 
 ---
